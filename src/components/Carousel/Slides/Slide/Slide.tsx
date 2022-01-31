@@ -1,4 +1,4 @@
-import {CSSProperties, FunctionComponent, ReactNode} from "react";
+import {CSSProperties, ReactNode} from "react";
 
 import classes from "./Slide.module.scss";
 
