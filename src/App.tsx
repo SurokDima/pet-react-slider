@@ -1,13 +1,13 @@
-import Carousel from "./components/Carousel/Carousel";
+import Carousel from './components/Carousel/Carousel';
 
-import Slide from "./components/Carousel/Slides/Slide/Slide";
+import Slide from './components/Carousel/Slides/Slide/Slide';
 
-import classes from "./App.module.scss";
+import classes from './App.module.scss';
 
 function App() {
   return (
     <div className={classes.app}>
-      <Carousel elemsPerSlide={2}>
+      <Carousel>
         <Slide className={classes.slide}>
           <h2 className={classes.slideContent}>1</h2>
         </Slide>
