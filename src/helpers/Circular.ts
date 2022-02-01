@@ -50,22 +50,13 @@ export class Circular {
   };
 
   public reset = (): void => {
-    console.log(
-      this._offset,
-      this._slidesToScroll,
+    const offset =
       this._trackLength -
-        this._slidesToShow -
-        (this._offset + this._slidesToScroll) <=
-        this._slidesToScroll
-    );
+      this._slidesToShow -
+      this._offset -
+      this._slidesToScroll;
 
-    if (
-      this._trackLength -
-        this._slidesToShow -
-        this._offset -
-        this._slidesToScroll <=
-      this._slidesToScroll
-    ) {
+    if (offset <= this._slidesToScroll) {
       this._toNextLoopCycle();
     }
   };

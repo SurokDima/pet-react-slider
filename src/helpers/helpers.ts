@@ -32,24 +32,22 @@ export function useWidth<T extends HTMLElement>(
  * @param autoplaySpeed - time between slides (in sec)
  * @param currentIndex - current index
  * @param setCurrentIndex - function to set current index
+ * @param slide
  */
 export function useAutoplay(
   autoplay: boolean,
   autoplaySpeed: number,
   currentIndex: number,
-  setCurrentIndex: (index: number) => void
+  slide: () => void
 ): [boolean, (isPlay: boolean) => void] {
   const [isPlay, setIsPlay] = useState<boolean>(autoplay);
 
   useEffect(() => {
     if (isPlay) {
-      const timer = setTimeout(
-        () => setCurrentIndex(currentIndex + 1),
-        autoplaySpeed * 1000
-      );
+      const timer = setTimeout(() => slide(), autoplaySpeed * 1000);
       return () => clearTimeout(timer);
     }
-  }, [isPlay, currentIndex, setCurrentIndex, autoplaySpeed]);
+  }, [isPlay, slide, currentIndex, autoplaySpeed]);
 
   return [isPlay, setIsPlay];
 }

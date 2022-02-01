@@ -3,8 +3,13 @@ import React, { useState } from 'react';
 import SlidesProvider, {
   ISlidesProviderProps as ISlidesProps,
 } from '../Slides/SlidesProvider';
-import { useCircular, useTimeLimit, useWidth } from '../../helpers/helpers';
-import { Slides, Directions } from '../../types/types';
+import {
+  useAutoplay,
+  useCircular,
+  useTimeLimit,
+  useWidth,
+} from '../../helpers/helpers';
+import { Directions, Slides } from '../../types/types';
 import defaultProps from './carouselDefaultProps';
 
 import classes from '../../styles/Carousel.module.scss';
@@ -26,19 +31,12 @@ export default function Carousel(userProps: ICarouselProps) {
     props.slidesToScroll
   );
 
-  // const [isPlay, setIsPlay] = useAutoplay(
-  //   props.autoplay,
-  //   props.autoplaySpeed,
-  //   circular.offset,
-  //   circular.setOffset
-  // );
-
   const [isAnimate, setIsAnimate] = useState<boolean>(false);
   const [isClickable, setIsClickable] = useTimeLimit(
     props.animationDuration * 1000
   );
 
-  function handleClick(direction: Directions) {
+  function slide(direction: Directions): void {
     if (isClickable) {
       setIsAnimate(true);
       circular.rotate(direction);
@@ -49,6 +47,13 @@ export default function Carousel(userProps: ICarouselProps) {
       setIsClickable(false);
     }
   }
+
+  const [isPlay, setIsPlay] = useAutoplay(
+    props.autoplay,
+    props.autoplaySpeed + props.animationDuration,
+    circular.offset,
+    () => slide(Directions.Right)
+  );
 
   const slidesProps: ISlidesProps = {
     isAnimate,
@@ -62,8 +67,8 @@ export default function Carousel(userProps: ICarouselProps) {
       <div className={classes.window}>
         <SlidesProvider {...slidesProps}>{circular.slides}</SlidesProvider>
       </div>
-      <button onClick={() => handleClick(Directions.Left)}>Left</button>
-      <button onClick={() => handleClick(Directions.Right)}>Right</button>
+      <button onClick={() => slide(Directions.Left)}>Left</button>
+      <button onClick={() => slide(Directions.Right)}>Right</button>
     </div>
   );
 }
