@@ -17,7 +17,7 @@ export default function SlidesProvider({
 
   return (
     <div className={classes.slides} style={styles}>
-      {children.map((slide, index) => (
+      {children.map(slide => (
         //TODO Fix it
         <div style={{ minWidth: slideWidth }} key={nanoid()}>
           {slide}

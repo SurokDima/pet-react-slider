@@ -3,12 +3,12 @@ import { ICarouselProps } from './Carousel';
 const carouselDefaultProps: Required<ICarouselProps> = {
   children: [],
   slidesToShow: 1.5,
-  slidesToScroll: 1,
+  slidesToScroll: 1.4,
   autoplay: true,
-  autoplaySpeed: 4,
+  autoplaySpeed: 1,
   startIndex: 0,
   animationDuration: 0.5,
-  infinite: true,
+  infinite: 'none',
 };
 
 export default carouselDefaultProps;

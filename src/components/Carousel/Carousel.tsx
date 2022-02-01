@@ -1,48 +1,70 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import SlidesProvider, {
   ISlidesProviderProps as ISlidesProps,
 } from '../Slides/SlidesProvider';
+import { initSlides, inverseDirection } from '../../helpers/helpers';
+import { Directions, Infinite, Slides, Throttle } from '../../types/types';
+import defaultProps from './carouselDefaultProps';
 import {
   useAutoplay,
   useCircular,
   useTimeLimit,
   useWidth,
-} from '../../helpers/helpers';
-import { Directions, Slides } from '../../types/types';
-import defaultProps from './carouselDefaultProps';
+} from '../../helpers/hooks';
 
 import classes from '../../styles/Carousel.module.scss';
 
 export default function Carousel(userProps: ICarouselProps) {
   const props = { ...defaultProps, ...userProps };
-  const slides = Array.isArray(props.children)
-    ? props.children
-    : [props.children];
 
   const [width, ref] = useWidth<HTMLDivElement>(0);
-  const slideWidth = width / props.slidesToShow;
 
-  const circular = useCircular(
+  const slides = initSlides(props.children, props.slidesToShow, props.infinite); //TODO maybe it must be in state
+  const slideWidth = width / props.slidesToShow;
+  const trackLength = slides.length;
+
+  const [circularOffset, setOffset] = useCircular(
     props.startIndex,
-    slides,
     props.slidesToShow,
-    props.slidesToScroll
+    props.slidesToScroll,
+    trackLength,
+    props.infinite
   );
 
   const [isAnimate, setIsAnimate] = useState<boolean>(false);
   const [isClickable, setIsClickable] = useTimeLimit(
     props.animationDuration * 1000
   );
+  const [throttle, setThrottle] = useState<Throttle>(false);
+
+  useEffect(() => {
+    if (!isAnimate && props.infinite === 'infinite') {
+      const isShouldReset = circularOffset.isShouldReset();
+      if (isShouldReset !== false && isShouldReset !== throttle) {
+        setOffset(circularOffset.toNextLoopCycle(isShouldReset));
+        setThrottle(inverseDirection(isShouldReset));
+      }
+    }
+  }, [
+    circularOffset,
+    circularOffset.offset,
+    isAnimate,
+    props.infinite,
+    setOffset,
+    throttle,
+  ]);
 
   function slide(direction: Directions): void {
     if (isClickable) {
       setIsAnimate(true);
-      circular.rotate(direction);
+      setThrottle(false);
+      setOffset(circularOffset.rotate(direction));
+
       setTimeout(() => {
         setIsAnimate(false);
-        circular.reset();
       }, props.animationDuration * 1000);
+
       setIsClickable(false);
     }
   }
@@ -50,13 +72,13 @@ export default function Carousel(userProps: ICarouselProps) {
   const [isPlay, setIsPlay] = useAutoplay(
     props.autoplay,
     props.autoplaySpeed + props.animationDuration,
-    circular.offset,
+    circularOffset.offset,
     () => slide(Directions.Right)
   );
 
   const slidesProps: ISlidesProps = {
     isAnimate,
-    currentIndex: circular.offset,
+    currentIndex: circularOffset.offset,
     slideWidth,
     animationDuration: props.animationDuration,
   };
@@ -64,7 +86,7 @@ export default function Carousel(userProps: ICarouselProps) {
   return (
     <div className={classes.carousel} ref={ref}>
       <div className={classes.window}>
-        <SlidesProvider {...slidesProps}>{circular.slides}</SlidesProvider>
+        <SlidesProvider {...slidesProps}>{slides}</SlidesProvider>
       </div>
       <button onClick={() => slide(Directions.Left)}>Left</button>
       <button onClick={() => slide(Directions.Right)}>Right</button>
@@ -75,7 +97,7 @@ export default function Carousel(userProps: ICarouselProps) {
 export interface ICarouselProps {
   children: Slides;
 
-  infinite?: boolean;
+  infinite?: Infinite;
   slidesToShow?: number;
   slidesToScroll?: number;
   animationDuration?: number;
