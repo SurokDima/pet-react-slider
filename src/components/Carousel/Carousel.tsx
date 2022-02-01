@@ -1,87 +1,81 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
-import Slides, { IProps as ISlidesProps } from './Slides/Slides';
-import Slide, { IProps as ISlideProps } from './Slides/Slide/Slide';
-import { filterChildren, useWidth } from '../../helpers/Helpers';
+import SlidesProvider, {
+  ISlidesProviderProps as ISlidesProps,
+} from '../Slides/SlidesProvider';
+import { useWidth, useAutoplay } from '../../helpers/helpers';
+import { Slide, Slides } from '../../types/types';
+import defaultProps from './carouselDefaultProps';
 
-import classes from './Carousel.module.scss';
+import classes from '../../styles/Carousel.module.scss';
 
-interface IProps {
-  children: ReactNode;
+export default function Carousel(userProps: ICarouselProps) {
+  const props = { ...defaultProps, ...userProps };
+  const slides = Array.isArray(props.children)
+    ? props.children
+    : [props.children];
 
+  const [width, ref] = useWidth<HTMLDivElement>(0);
+
+  const slideWidth = width / props.slidesToShow;
+  const slidesLength = slides.length;
+
+  const [currentIndex, setCurrentIndex] = useState<number>(
+    props.startIndex + 1
+  );
+  const [isPlay, setIsPlay] = useAutoplay(
+    props.autoplay,
+    props.autoplaySpeed,
+    currentIndex,
+    setCurrentIndex
+  );
+
+  const [isAnimate, setIsAnimate] = useState<boolean>(false);
+  function handleClick(i: number) {
+    setIsAnimate(true);
+    setCurrentIndex(currentIndex + i);
+    setTimeout(() => {
+      setIsAnimate(false);
+      if (currentIndex === slides.length) {
+        setCurrentIndex(1); //TODO fix it
+      }
+    }, 1000);
+  }
+
+  const slidesProps: ISlidesProps = {
+    isAnimate,
+    currentIndex,
+    slideWidth,
+    animationDuration: props.animationDuration,
+  };
+
+  return (
+    <div className={classes.carousel} ref={ref}>
+      <div className={classes.window}>
+        <SlidesProvider {...slidesProps}>
+          {setInfiniteLine(slides)}
+        </SlidesProvider>
+      </div>
+      <button onClick={() => handleClick(-1)}>Left</button>
+      <button onClick={() => handleClick(1)}>Right</button>
+    </div>
+  );
+}
+
+function setInfiniteLine(slides: Slide[]) {
+  const length = slides.length;
+  const result = [slides[length - 1], ...slides, slides[0]];
+  return result;
+}
+
+export interface ICarouselProps {
+  children: Slides;
+
+  infinite?: boolean;
   slidesToShow?: number;
   slidesToScroll?: number;
   animationDuration?: number;
   autoplay?: boolean;
   autoplaySpeed?: number;
   startIndex?: number;
-}
-
-export default function Carousel({
-  children,
-  slidesToShow = 1,
-  slidesToScroll = 1,
-  autoplay = true,
-  autoplaySpeed = 4,
-  startIndex = 0,
-  animationDuration = 0.5,
-}: IProps) {
-  const [width, ref] = useWidth<HTMLDivElement>(0);
-
-  const slides = filterChildren<ISlideProps>(children, Slide);
-  const slideWidth = width / slidesToShow;
-  const slidesLength = slides.length;
-
-  const [currentIndex, setCurrentIndex] = useState<number>(startIndex);
-  const [isPlay, setIsPlay] = useAutoplay(
-    autoplay,
-    autoplaySpeed,
-    currentIndex,
-    setCurrentIndex
-  );
-
-  const slidesProps: ISlidesProps = {
-    currentIndex,
-    slideWidth,
-    animationDuration,
-  };
-
-  return (
-    <div className={classes.carousel} ref={ref}>
-      <div className={classes.window}>
-        <Slides {...slidesProps}>{slides}</Slides>
-      </div>
-      <button onClick={() => setCurrentIndex(currentIndex - 1)}>Left</button>
-      <button onClick={() => setCurrentIndex(currentIndex + 1)}>Right</button>
-    </div>
-  );
-}
-
-/**
- * Sets autoplay index
- *
- * @param autoplay - default value
- * @param autoplaySpeed - time between slides (in sec)
- * @param currentIndex - current index
- * @param setCurrentIndex - function to set current index
- */
-function useAutoplay(
-  autoplay: boolean,
-  autoplaySpeed: number,
-  currentIndex: number,
-  setCurrentIndex: (index: number) => void
-) {
-  const [isPlay, setIsPlay] = useState<boolean>(autoplay);
-
-  useEffect(() => {
-    if (isPlay) {
-      const timer = setTimeout(
-        () => setCurrentIndex(currentIndex + 1),
-        autoplaySpeed * 1000
-      );
-      return () => clearTimeout(timer);
-    }
-  }, [isPlay, currentIndex, setCurrentIndex, autoplaySpeed]);
-
-  return [isPlay, setIsPlay];
 }
