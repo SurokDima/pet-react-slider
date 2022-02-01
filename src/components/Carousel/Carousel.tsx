@@ -21,7 +21,6 @@ export default function Carousel(userProps: ICarouselProps) {
     : [props.children];
 
   const [width, ref] = useWidth<HTMLDivElement>(0);
-
   const slideWidth = width / props.slidesToShow;
 
   const circular = useCircular(
