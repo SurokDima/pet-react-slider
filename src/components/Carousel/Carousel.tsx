@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import SlidesProvider, {
   ISlidesProviderProps as ISlidesProps,
 } from '../Slides/SlidesProvider';
-import { useWidth, useAutoplay } from '../../helpers/helpers';
-import { Slide, Slides } from '../../types/types';
+import { useCircular, useTimeLimit, useWidth } from '../../helpers/helpers';
+import { Slides, Directions } from '../../types/types';
 import defaultProps from './carouselDefaultProps';
 
 import classes from '../../styles/Carousel.module.scss';
@@ -18,33 +18,41 @@ export default function Carousel(userProps: ICarouselProps) {
   const [width, ref] = useWidth<HTMLDivElement>(0);
 
   const slideWidth = width / props.slidesToShow;
-  const slidesLength = slides.length;
 
-  const [currentIndex, setCurrentIndex] = useState<number>(
-    props.startIndex + 1
+  const circular = useCircular(
+    props.startIndex,
+    slides,
+    props.slidesToShow,
+    props.slidesToScroll
   );
-  const [isPlay, setIsPlay] = useAutoplay(
-    props.autoplay,
-    props.autoplaySpeed,
-    currentIndex,
-    setCurrentIndex
-  );
+
+  // const [isPlay, setIsPlay] = useAutoplay(
+  //   props.autoplay,
+  //   props.autoplaySpeed,
+  //   circular.offset,
+  //   circular.setOffset
+  // );
 
   const [isAnimate, setIsAnimate] = useState<boolean>(false);
-  function handleClick(i: number) {
-    setIsAnimate(true);
-    setCurrentIndex(currentIndex + i);
-    setTimeout(() => {
-      setIsAnimate(false);
-      if (currentIndex === slides.length) {
-        setCurrentIndex(1); //TODO fix it
-      }
-    }, 1000);
+  const [isClickable, setIsClickable] = useTimeLimit(
+    props.animationDuration * 1000
+  );
+
+  function handleClick(direction: Directions) {
+    if (isClickable) {
+      setIsAnimate(true);
+      circular.rotate(direction);
+      setTimeout(() => {
+        setIsAnimate(false);
+        circular.reset();
+      }, props.animationDuration * 1000);
+      setIsClickable(false);
+    }
   }
 
   const slidesProps: ISlidesProps = {
     isAnimate,
-    currentIndex,
+    currentIndex: circular.offset,
     slideWidth,
     animationDuration: props.animationDuration,
   };
@@ -52,20 +60,12 @@ export default function Carousel(userProps: ICarouselProps) {
   return (
     <div className={classes.carousel} ref={ref}>
       <div className={classes.window}>
-        <SlidesProvider {...slidesProps}>
-          {setInfiniteLine(slides)}
-        </SlidesProvider>
+        <SlidesProvider {...slidesProps}>{circular.slides}</SlidesProvider>
       </div>
-      <button onClick={() => handleClick(-1)}>Left</button>
-      <button onClick={() => handleClick(1)}>Right</button>
+      <button onClick={() => handleClick(Directions.Left)}>Left</button>
+      <button onClick={() => handleClick(Directions.Right)}>Right</button>
     </div>
   );
-}
-
-function setInfiniteLine(slides: Slide[]) {
-  const length = slides.length;
-  const result = [slides[length - 1], ...slides, slides[0]];
-  return result;
 }
 
 export interface ICarouselProps {
