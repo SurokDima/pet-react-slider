@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react';
 import SlidesProvider, {
   ISlidesProviderProps as ISlidesProps,
 } from '../Slides/SlidesProvider';
-import { inverseDirection, initSlideObjects } from '../../helpers/helpers';
+import { initSlideObjects, inverseDirection } from '../../helpers/helpers';
 import {
+  IControlButton,
   Directions,
   Infinite,
   Slide,
@@ -21,6 +22,7 @@ import {
 } from '../../helpers/hooks';
 
 import classes from '../../styles/Carousel.module.scss';
+import ControlButton from '../ControlButton/ControlButton';
 
 export default function Carousel(userProps: ICarouselProps) {
   const props: Required<ICarouselProps> = { ...defaultProps, ...userProps };
@@ -101,8 +103,22 @@ export default function Carousel(userProps: ICarouselProps) {
       <div className={classes.window}>
         <SlidesProvider {...slidesProps}>{slides}</SlidesProvider>
       </div>
-      <button onClick={() => slide(Directions.Left)}>Left</button>
-      <button onClick={() => slide(Directions.Right)}>Right</button>
+      <ControlButton
+        type={Directions.Left}
+        onClick={() => slide(Directions.Left)}
+        className={props.prevButton.className}
+        style={props.prevButton.style}
+      >
+        {props.prevButton.children}
+      </ControlButton>
+      <ControlButton
+        type={Directions.Right}
+        onClick={() => slide(Directions.Right)}
+        className={props.nextButton.className}
+        style={props.nextButton.style}
+      >
+        {props.nextButton.children}
+      </ControlButton>
     </div>
   );
 }
@@ -110,6 +126,8 @@ export default function Carousel(userProps: ICarouselProps) {
 export interface ICarouselProps {
   children: Slide[];
 
+  prevButton?: IControlButton;
+  nextButton?: IControlButton;
   infinite?: Infinite;
   slidesToShow?: number;
   slidesToScroll?: number;
