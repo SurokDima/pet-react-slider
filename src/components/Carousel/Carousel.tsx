@@ -1,14 +1,27 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import SlidesProvider, {
   ISlidesProviderProps as ISlidesProps,
 } from '../Slides/SlidesProvider';
-import { initSlides, inverseDirection } from '../../helpers/helpers';
-import { Directions, Infinite, Slides, Throttle } from '../../types/types';
+import {
+  inverseDirection,
+  initSlideObjects,
+  childrenIsChanged,
+} from '../../helpers/helpers';
+import {
+  Directions,
+  Infinite,
+  Slide,
+  SlideObj,
+  Throttle,
+} from '../../types/types';
 import defaultProps from './carouselDefaultProps';
 import {
+  useAnimation,
   useAutoplay,
-  useCircular,
+  useCircularOffset,
+  useCustomValueChangeLogic,
+  useDynamicChildren,
   useTimeLimit,
   useWidth,
 } from '../../helpers/hooks';
@@ -16,15 +29,17 @@ import {
 import classes from '../../styles/Carousel.module.scss';
 
 export default function Carousel(userProps: ICarouselProps) {
-  const props = { ...defaultProps, ...userProps };
+  const props: Required<ICarouselProps> = { ...defaultProps, ...userProps };
 
   const [width, ref] = useWidth<HTMLDivElement>(0);
 
-  const slides = initSlides(props.children, props.slidesToShow, props.infinite); //TODO maybe it must be in state
+  const [slides, setSlides] = useState<SlideObj[]>(
+    initSlideObjects(props.children, props.slidesToShow, props.infinite)
+  );
   const slideWidth = width / props.slidesToShow;
   const trackLength = slides.length;
 
-  const [circularOffset, setOffset] = useCircular(
+  const [circularOffset, setOffset] = useCircularOffset(
     props.startIndex,
     props.slidesToShow,
     props.slidesToScroll,
@@ -32,14 +47,14 @@ export default function Carousel(userProps: ICarouselProps) {
     props.infinite
   );
 
-  const [isAnimate, setIsAnimate] = useState<boolean>(false);
-  const [isClickable, setIsClickable] = useTimeLimit(
-    props.animationDuration * 1000
-  );
+  const [animation, setAnimation] = useAnimation({
+    transition: 0,
+    isSliding: false,
+  });
   const [throttle, setThrottle] = useState<Throttle>(false);
 
   useEffect(() => {
-    if (!isAnimate && props.infinite === 'infinite') {
+    if (!animation.isSliding && props.infinite === 'infinite') {
       const isShouldReset = circularOffset.isShouldReset();
       if (isShouldReset !== false && isShouldReset !== throttle) {
         setOffset(circularOffset.toNextLoopCycle(isShouldReset));
@@ -47,40 +62,44 @@ export default function Carousel(userProps: ICarouselProps) {
       }
     }
   }, [
+    animation.isSliding,
     circularOffset,
     circularOffset.offset,
-    isAnimate,
     props.infinite,
     setOffset,
     throttle,
   ]);
 
-  function slide(direction: Directions): void {
-    if (isClickable) {
-      setIsAnimate(true);
+  const slide = (direction: Directions): void => {
+    if (!animation.isSliding) {
       setThrottle(false);
+      setAnimation({
+        ...animation,
+        transition: props.animationDuration,
+        isSliding: true,
+      });
       setOffset(circularOffset.rotate(direction));
-
-      setTimeout(() => {
-        setIsAnimate(false);
-      }, props.animationDuration * 1000);
-
-      setIsClickable(false);
     }
-  }
+  };
 
-  const [isPlay, setIsPlay] = useAutoplay(
+  useAutoplay(
     props.autoplay,
     props.autoplaySpeed + props.animationDuration,
     circularOffset.offset,
     () => slide(Directions.Right)
   );
 
+  useDynamicChildren(
+    props.children,
+    props.slidesToShow,
+    props.infinite,
+    setSlides
+  );
+
   const slidesProps: ISlidesProps = {
-    isAnimate,
-    currentIndex: circularOffset.offset,
     slideWidth,
-    animationDuration: props.animationDuration,
+    transition: animation.transition,
+    transform: circularOffset.offset * slideWidth,
   };
 
   return (
@@ -95,7 +114,7 @@ export default function Carousel(userProps: ICarouselProps) {
 }
 
 export interface ICarouselProps {
-  children: Slides;
+  children: Slide[];
 
   infinite?: Infinite;
   slidesToShow?: number;
@@ -104,4 +123,9 @@ export interface ICarouselProps {
   autoplay?: boolean;
   autoplaySpeed?: number;
   startIndex?: number;
+}
+
+export interface IAnimationState {
+  transition: number;
+  isSliding: boolean;
 }

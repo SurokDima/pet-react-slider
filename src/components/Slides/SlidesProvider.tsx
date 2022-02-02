@@ -1,26 +1,25 @@
-import React, { CSSProperties, ReactElement } from 'react';
+import React, { CSSProperties } from 'react';
 
 import classes from '../../styles/Slides.module.scss';
 import { nanoid } from 'nanoid';
+import { SlideObj } from '../../types/types';
 
 export default function SlidesProvider({
+  transform,
+  transition,
   slideWidth,
-  currentIndex,
-  animationDuration,
-  isAnimate,
   children = [],
 }: ISlidesProviderProps) {
   const styles: CSSProperties = {
-    transform: `translateX(${-currentIndex * slideWidth}px)`,
-    transition: isAnimate ? `transform ${animationDuration}s` : '',
+    transform: `translateX(${-transform}px)`,
+    transition: `transform ${transition}s`,
   };
 
   return (
     <div className={classes.slides} style={styles}>
-      {children.map(slide => (
-        //TODO Fix it
-        <div style={{ minWidth: slideWidth }} key={nanoid()}>
-          {slide}
+      {children.map(slideObj => (
+        <div style={{ minWidth: slideWidth }} key={slideObj.id}>
+          {slideObj.slide}
         </div>
       ))}
     </div>
@@ -28,10 +27,9 @@ export default function SlidesProvider({
 }
 
 export interface ISlidesProviderProps {
+  transform: number;
+  transition: number;
   slideWidth: number;
-  currentIndex: number;
-  animationDuration: number;
-  isAnimate: boolean;
 
-  children?: ReactElement[];
+  children?: SlideObj[];
 }

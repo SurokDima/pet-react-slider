@@ -1,7 +1,11 @@
 import { ReactElement } from 'react';
 
 export type Slide = ReactElement;
-export type Slides = Slide | Slide[];
+export interface SlideObj {
+  id: string;
+  slide: Slide;
+}
+
 export type Infinite = 'infinite' | 'loop' | 'none';
 export type Throttle = Directions | false;
 

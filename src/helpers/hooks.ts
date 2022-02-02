@@ -1,6 +1,15 @@
-import { RefObject, useEffect, useRef, useState } from 'react';
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { CircularOffset } from './CircularOffset';
-import { Directions, Infinite, Throttle } from '../types/types';
+import {
+  Directions,
+  Infinite,
+  Slide,
+  SlideObj,
+  Throttle,
+} from '../types/types';
+import { childrenIsChanged, initSlideObjects, updateSlides } from './helpers';
+import { start } from 'repl';
+import { IAnimationState } from '../components/Carousel/Carousel';
 
 /**
  * Hook to keep track of the width of element
@@ -57,7 +66,7 @@ export function useOffset(
   infinite: Infinite
 ): [number, (arg: number) => void] {
   return useState<number>(
-    startOffset + infinite === 'infinite' ? Math.ceil(slidesToShow) : 0
+    startOffset + (infinite === 'infinite' ? Math.ceil(slidesToShow) : 0)
   );
 }
 
@@ -70,7 +79,7 @@ export function useOffset(
  * @param trackLength
  * @param infinite
  */
-export function useCircular(
+export function useCircularOffset(
   startOffset: number,
   slidesToShow: number,
   slidesToScroll: number,
@@ -103,4 +112,70 @@ export function useTimeLimit(time: number): [boolean, (arg: boolean) => void] {
     }
   }, [isClickable, time]);
   return [isClickable, setIsClickable];
+}
+
+export function useAnimation(
+  startState: IAnimationState
+): [IAnimationState, (animState: IAnimationState) => void] {
+  const [animation, setAnimation] = useState<IAnimationState>(startState);
+
+  useEffect(() => {
+    if (animation.isSliding) {
+      setTimeout(
+        () =>
+          setAnimation({
+            ...animation,
+            transition: 0,
+            isSliding: false,
+          }),
+        animation.transition * 1000
+      );
+    }
+  }, [animation]);
+
+  return [animation, setAnimation];
+}
+
+/**
+ * Executes callback if function isChanged return true
+ *
+ * @param prevValue
+ * @param newValue
+ * @param isChanged
+ * @param callback
+ */
+export function useCustomValueChangeLogic<T>(
+  prevValue: T,
+  newValue: T,
+  isChanged: (prevChildren: T, newChildren: T) => boolean,
+  callback: () => void
+): void {
+  useEffect(() => {
+    if (isChanged(newValue, prevValue)) {
+      callback();
+    }
+  }, [callback, isChanged, newValue, prevValue]);
+}
+
+export function useDynamicChildren(
+  children: Slide[],
+  slidesToShow: number,
+  infinite: Infinite,
+  setSlides: (slides: SlideObj[]) => void
+): Slide[] {
+  const [prevChildren] = useState<Slide[]>(children);
+
+  const setSlidesCallback = useCallback<() => void>(
+    () => setSlides(initSlideObjects(children, slidesToShow, infinite)),
+    [setSlides, children, slidesToShow, infinite]
+  );
+
+  useCustomValueChangeLogic(
+    prevChildren,
+    children,
+    childrenIsChanged,
+    setSlidesCallback
+  );
+
+  return prevChildren;
 }
