@@ -1,14 +1,7 @@
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { CircularOffset } from './CircularOffset';
-import {
-  Directions,
-  Infinite,
-  Slide,
-  SlideObj,
-  Throttle,
-} from '../types/types';
-import { childrenIsChanged, initSlideObjects, updateSlides } from './helpers';
-import { start } from 'repl';
+import { Infinite, Slide, SlideObj } from '../types/types';
+import { childrenIsChanged, initSlideObjects } from './helpers';
 import { IAnimationState } from '../components/Carousel/Carousel';
 
 /**
@@ -96,22 +89,6 @@ export function useCircularOffset(
   );
 
   return [circular, setOffset];
-}
-
-/**
- * Creates isClickable state hook
- * Serves for time limit
- *
- * @param time number of ms
- */
-export function useTimeLimit(time: number): [boolean, (arg: boolean) => void] {
-  const [isClickable, setIsClickable] = useState<boolean>(true);
-  useEffect(() => {
-    if (!isClickable) {
-      setTimeout(() => setIsClickable(true), time);
-    }
-  }, [isClickable, time]);
-  return [isClickable, setIsClickable];
 }
 
 export function useAnimation(

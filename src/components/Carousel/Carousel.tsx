@@ -1,13 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import SlidesProvider, {
   ISlidesProviderProps as ISlidesProps,
 } from '../Slides/SlidesProvider';
-import {
-  inverseDirection,
-  initSlideObjects,
-  childrenIsChanged,
-} from '../../helpers/helpers';
+import { inverseDirection, initSlideObjects } from '../../helpers/helpers';
 import {
   Directions,
   Infinite,
@@ -20,9 +16,7 @@ import {
   useAnimation,
   useAutoplay,
   useCircularOffset,
-  useCustomValueChangeLogic,
   useDynamicChildren,
-  useTimeLimit,
   useWidth,
 } from '../../helpers/hooks';
 

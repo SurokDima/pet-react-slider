@@ -1,7 +1,6 @@
 import React, { CSSProperties } from 'react';
 
 import classes from '../../styles/Slides.module.scss';
-import { nanoid } from 'nanoid';
 import { SlideObj } from '../../types/types';
 
 export default function SlidesProvider({
