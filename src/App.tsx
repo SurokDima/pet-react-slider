@@ -3,7 +3,6 @@ import React, { ReactElement, ReactNode, useState } from 'react';
 import Carousel from './components/Carousel/Carousel';
 
 import classes from './styles/App.module.scss';
-import { Slide } from './types/types';
 import { nanoid } from 'nanoid';
 
 interface ISlide {

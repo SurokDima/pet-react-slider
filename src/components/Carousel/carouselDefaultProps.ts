@@ -8,7 +8,7 @@ const carouselDefaultProps: Required<ICarouselProps> = {
   autoplaySpeed: 1,
   startIndex: 0,
   animationDuration: 0.5,
-  infinite: 'infinite',
+  infinite: 'loop',
 };
 
 export default carouselDefaultProps;
