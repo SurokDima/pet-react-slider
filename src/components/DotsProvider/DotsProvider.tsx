@@ -1,5 +1,5 @@
 import { HTMLAttributes } from 'react';
-import { IGroup, ISlideObj } from '../../types/types';
+import { IGroup } from '../../types/types';
 import Dot from './Dot/Dot';
 
 import classes from '../../styles/DotsProvider.module.scss';

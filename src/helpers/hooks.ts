@@ -5,10 +5,8 @@ import {
   childrenIsChanged,
   initGroups,
   initSlideObjects,
-  limitOffset,
 } from './helpers';
 import { IAnimationState } from '../components/Carousel/Carousel';
-import { nanoid } from 'nanoid';
 
 /**
  * Hook to keep track of the width of element

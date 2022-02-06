@@ -1,5 +1,4 @@
 import { ICarouselProps } from './Carousel';
-import { Arrow } from '../Arrow/Arrow';
 
 const carouselDefaultProps: Required<ICarouselProps> = {
   children: [],
