@@ -1,0 +1,12 @@
+.provider {
+  display: flex;
+  justify-content: center;
+}
+
+.dot {
+  margin-right: 20px;
+
+  &:last-child {
+    margin: 0;
+  }
+}

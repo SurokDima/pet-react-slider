@@ -6,12 +6,12 @@ const carouselDefaultProps: Required<ICarouselProps> = {
   nextButton: { children: null },
   prevButton: { children: null },
   slidesToShow: 1.5,
-  slidesToScroll: 1.4,
+  slidesToScroll: 1.5, //TODO Limit this numbers
   autoplay: false,
   autoplaySpeed: 1,
-  startIndex: 0,
+  startOffset: 0.5,
   animationDuration: 0.5,
-  infinite: 'loop',
+  infinite: 'infinite',
 };
 
 export default carouselDefaultProps;

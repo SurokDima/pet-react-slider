@@ -9,7 +9,7 @@ import {
   Directions,
   Infinite,
   Slide,
-  SlideObj,
+  ISlideObj,
   Throttle,
 } from '../../types/types';
 import defaultProps from './carouselDefaultProps';
@@ -18,25 +18,47 @@ import {
   useAutoplay,
   useCircularOffset,
   useDynamicChildren,
+  useGroups,
   useWidth,
 } from '../../helpers/hooks';
+import ControlButton from '../ControlButton/ControlButton';
+import DotsProvider from '../DotsProvider/DotsProvider';
 
 import classes from '../../styles/Carousel.module.scss';
-import ControlButton from '../ControlButton/ControlButton';
 
 export default function Carousel(userProps: ICarouselProps) {
   const props: Required<ICarouselProps> = { ...defaultProps, ...userProps };
 
   const [width, ref] = useWidth<HTMLDivElement>(0);
 
-  const [slides, setSlides] = useState<SlideObj[]>(
+  const [slides, setSlides] = useState<ISlideObj[]>(
     initSlideObjects(props.children, props.slidesToShow, props.infinite)
   );
   const slideWidth = width / props.slidesToShow;
   const trackLength = slides.length;
 
+  const [groups, setGroups] = useGroups(
+    props.children.length, //TODO Optimize this
+    props.startOffset,
+    props.slidesToScroll,
+    props.slidesToShow,
+    props.infinite
+  );
+
+  const getCurrentGroup = (): number => {
+    for (let i = 0; i < groups.length - 1; i++) {
+      if (
+        circularOffset.offset >= groups[i].offset &&
+        circularOffset.offset < groups[i + 1].offset
+      )
+        return i;
+    }
+
+    return groups.length - 1;
+  };
+
   const [circularOffset, setOffset] = useCircularOffset(
-    props.startIndex,
+    props.startOffset,
     props.slidesToShow,
     props.slidesToScroll,
     trackLength,
@@ -66,6 +88,7 @@ export default function Carousel(userProps: ICarouselProps) {
     throttle,
   ]);
 
+  //TODO FIX slide and slideTO
   const slide = (direction: Directions): void => {
     if (!animation.isSliding) {
       setThrottle(false);
@@ -78,6 +101,20 @@ export default function Carousel(userProps: ICarouselProps) {
     }
   };
 
+  const slideTo = (offset: number): void => {
+    if (!animation.isSliding) {
+      setThrottle(false);
+      setAnimation({
+        ...animation,
+        transition: props.animationDuration,
+        isSliding: true,
+      });
+      setOffset(offset);
+    }
+  };
+
+  console.log();
+
   useAutoplay(
     props.autoplay,
     props.autoplaySpeed + props.animationDuration,
@@ -87,9 +124,12 @@ export default function Carousel(userProps: ICarouselProps) {
 
   useDynamicChildren(
     props.children,
+    props.startOffset,
     props.slidesToShow,
+    props.slidesToScroll,
     props.infinite,
-    setSlides
+    setSlides,
+    setGroups
   );
 
   const slidesProps: ISlidesProps = {
@@ -103,6 +143,13 @@ export default function Carousel(userProps: ICarouselProps) {
       <div className={classes.window}>
         <SlidesProvider {...slidesProps}>{slides}</SlidesProvider>
       </div>
+
+      <DotsProvider
+        groups={groups}
+        current={getCurrentGroup()}
+        onClickHandler={slideTo}
+      />
+
       <ControlButton
         type={Directions.Left}
         onClick={() => slide(Directions.Left)}
@@ -134,7 +181,7 @@ export interface ICarouselProps {
   animationDuration?: number;
   autoplay?: boolean;
   autoplaySpeed?: number;
-  startIndex?: number;
+  startOffset?: number;
 }
 
 export interface IAnimationState {

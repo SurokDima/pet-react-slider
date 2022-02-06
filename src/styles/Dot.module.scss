@@ -1,0 +1,22 @@
+$color-gray: #8D8D8D;
+
+.dot {
+  background: $color-gray;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+
+  transition: background .3s;
+
+  &.active {
+    background: lightblue;
+
+    &:hover {
+      background: lighten(lightblue, 5%);
+    }
+  }
+
+  &:hover {
+    background: lighten($color-gray, 20%);
+  }
+}

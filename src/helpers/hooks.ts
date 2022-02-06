@@ -1,8 +1,14 @@
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { CircularOffset } from './CircularOffset';
-import { Infinite, Slide, SlideObj } from '../types/types';
-import { childrenIsChanged, initSlideObjects } from './helpers';
+import { IGroup, Infinite, Slide, ISlideObj } from '../types/types';
+import {
+  childrenIsChanged,
+  initGroups,
+  initSlideObjects,
+  limitOffset,
+} from './helpers';
 import { IAnimationState } from '../components/Carousel/Carousel';
+import { nanoid } from 'nanoid';
 
 /**
  * Hook to keep track of the width of element
@@ -136,23 +142,61 @@ export function useCustomValueChangeLogic<T>(
 
 export function useDynamicChildren(
   children: Slide[],
+  startOffset: number,
   slidesToShow: number,
+  slidesToScroll: number,
   infinite: Infinite,
-  setSlides: (slides: SlideObj[]) => void
+  setSlides: (slides: ISlideObj[]) => void,
+  setGroups: (groups: IGroup[]) => void
 ): Slide[] {
   const [prevChildren] = useState<Slide[]>(children);
 
-  const setSlidesCallback = useCallback<() => void>(
-    () => setSlides(initSlideObjects(children, slidesToShow, infinite)),
-    [setSlides, children, slidesToShow, infinite]
-  );
+  const setSlidesAndGroupsCallback = useCallback<() => void>(() => {
+    setSlides(initSlideObjects(children, slidesToShow, infinite));
+    setGroups(
+      initGroups(
+        children.length,
+        startOffset,
+        slidesToShow,
+        slidesToScroll,
+        infinite
+      )
+    );
+  }, [
+    setSlides,
+    children,
+    slidesToShow,
+    infinite,
+    setGroups,
+    startOffset,
+    slidesToScroll,
+  ]);
 
   useCustomValueChangeLogic(
     prevChildren,
     children,
     childrenIsChanged,
-    setSlidesCallback
+    setSlidesAndGroupsCallback
   );
 
   return prevChildren;
+}
+
+export function useGroups(
+  length: number,
+  startOffset: number,
+  slidesToScroll: number,
+  slidesToShow: number,
+  infinite: Infinite
+): [IGroup[], (groups: IGroup[]) => void] {
+  const groups = initGroups(
+    length,
+    startOffset,
+    slidesToShow,
+    slidesToScroll,
+    infinite
+  );
+
+  const [groupsState, setGroups] = useState<IGroup[]>(groups);
+  return [groupsState, setGroups];
 }

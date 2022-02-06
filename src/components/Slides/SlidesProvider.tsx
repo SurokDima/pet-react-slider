@@ -1,7 +1,7 @@
 import React, { CSSProperties } from 'react';
 
 import classes from '../../styles/Slides.module.scss';
-import { SlideObj } from '../../types/types';
+import { ISlideObj } from '../../types/types';
 
 export default function SlidesProvider({
   transform,
@@ -30,5 +30,5 @@ export interface ISlidesProviderProps {
   transition: number;
   slideWidth: number;
 
-  children?: SlideObj[];
+  children?: ISlideObj[];
 }
