@@ -148,6 +148,9 @@ export default function Carousel(userProps: ICarouselProps) {
         groups={groups}
         current={getCurrentGroup()}
         onClickHandler={slideTo}
+        className={props.dotsProviderClassName}
+        dotsClassName={props.dotsClassName}
+        dotsActiveClassName={props.dotsActiveClassName}
       />
 
       <ControlButton
@@ -182,6 +185,9 @@ export interface ICarouselProps {
   autoplay?: boolean;
   autoplaySpeed?: number;
   startOffset?: number;
+  dotsClassName?: string;
+  dotsActiveClassName?: string;
+  dotsProviderClassName?: string;
 }
 
 export interface IAnimationState {

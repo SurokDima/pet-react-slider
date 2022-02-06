@@ -11,6 +11,9 @@ const carouselDefaultProps: Required<ICarouselProps> = {
   startOffset: 0.5,
   animationDuration: 0.5,
   infinite: 'infinite',
+  dotsActiveClassName: '',
+  dotsClassName: '',
+  dotsProviderClassName: '',
 };
 
 export default carouselDefaultProps;

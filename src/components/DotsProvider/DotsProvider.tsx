@@ -8,13 +8,20 @@ export default function DotsProvider({
   groups,
   current,
   onClickHandler,
+  className,
+  dotsClassName,
+  dotsActiveClassName,
   ...props
 }: IDotsProps) {
   return (
-    <div {...props} className={classes.provider}>
+    <div
+      {...props}
+      className={className.length === 0 ? classes.provider : className}
+    >
       {groups.map((group, index) => (
         <Dot
-          className={classes.dot}
+          className={dotsClassName}
+          classNameActive={dotsActiveClassName}
           targetOffset={group.offset}
           isCurrent={current === index}
           onClickHandler={onClickHandler}
@@ -29,4 +36,7 @@ interface IDotsProps extends HTMLAttributes<HTMLDivElement> {
   groups: IGroup[];
   current: number;
   onClickHandler: (offset: number) => void;
+  dotsClassName: string;
+  dotsActiveClassName: string;
+  className: string;
 }

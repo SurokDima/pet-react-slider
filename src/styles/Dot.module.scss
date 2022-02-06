@@ -8,6 +8,12 @@ $color-gray: #8D8D8D;
 
   transition: background .3s;
 
+  margin-right: 20px;
+
+  &:last-child {
+    margin: 0;
+  }
+
   &.active {
     background: lightblue;
 

@@ -1,17 +1,19 @@
 import { HTMLAttributes } from 'react';
 
 import classes from '../../../styles/Dot.module.scss';
-//TODO FIX ALL merged classNames and styles
+
 export default function Dot({
   isCurrent,
   className,
+  classNameActive,
   targetOffset,
   onClickHandler,
   ...props
 }: IDotProps) {
-  const cls = [classes.dot, className];
+  const cls = [className.length === 0 ? classes.dot : className];
 
-  if (isCurrent) cls.push(classes.active);
+  if (isCurrent)
+    cls.push(classNameActive.length === 0 ? classes.active : classNameActive);
 
   return (
     <div
@@ -26,4 +28,6 @@ interface IDotProps extends HTMLAttributes<HTMLDivElement> {
   isCurrent: boolean;
   targetOffset: number;
   onClickHandler: (offset: number) => void;
+  classNameActive: string;
+  className: string;
 }
