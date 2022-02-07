@@ -207,7 +207,7 @@ export default function useProgress(
   useEffect(() => {    
     if(isUsedProgress) {
       setProgress(0);
-
+      console.log(isUsedProgress)
       if (anim) {
 
         let start = 0;

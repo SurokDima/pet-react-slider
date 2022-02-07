@@ -23,10 +23,10 @@ const carouselDefaultProps: Required<ICarouselProps> = {
 
   offsetCustom: false,
 
-  setCurrentGroup: () => {},
-  setGroupsLength: () => {},
-  setProgress: () => {},
-  setOffset: () => {},
+  setCurrentGroup: null,
+  setGroupsLength: null,
+  setProgress: null,
+  setOffset: null,
 };
 
 export default carouselDefaultProps;

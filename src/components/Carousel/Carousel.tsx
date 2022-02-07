@@ -91,10 +91,12 @@ export default function Carousel(userProps: ICarouselProps) {
 
   // Reset current group index and groups length for external source
   const currentGroup = getCurrentGroup();
+  const setGroupsLength = props.setGroupsLength;
+  const setCurrentGroup = props.setCurrentGroup;
   useEffect(() => {
-    props.setCurrentGroup(currentGroup);
-    props.setGroupsLength(groups.length);
-  }, [currentGroup, groups.length, props]); //TODO FIX groups state
+    if(setCurrentGroup) setCurrentGroup(currentGroup);
+    if(setGroupsLength) setGroupsLength(groups.length);
+  }, [currentGroup, groups.length, props, setCurrentGroup, setGroupsLength]); //TODO FIX groups state
 
   // Use animation
   const [animation, setAnimation] = useAnimation({
@@ -164,12 +166,12 @@ export default function Carousel(userProps: ICarouselProps) {
     },
     [setLocalProgress, setExternalProgress]
   );
-/*   useProgress(
+  useProgress(
     isPlay && !animation.isSliding,
     props.autoplaySpeed * 1000,
-    setExternalOffset !== null || !props.hideDefaultProgress,
+    setExternalProgress !== null || !props.hideDefaultProgress,
     setProgress
-  ); */
+  ); 
 
   const slidesProps: ISlidesProps = {
     slideWidth,
@@ -275,10 +277,10 @@ export interface ICarouselProps {
 
   offsetCustom?: boolean;
 
-  setProgress?: (progress: number) => void;
-  setCurrentGroup?: (group: number) => void;
-  setGroupsLength?: (length: number) => void;
-  setOffset?: (offset: number) => void;
+  setProgress?: ((progress: number) => void) | null;
+  setCurrentGroup?: ((group: number) => void) | null;
+  setGroupsLength?: ((length: number) => void) | null;
+  setOffset?: ((offset: number) => void) | null;
 }
 
 export interface IAnimationState {
