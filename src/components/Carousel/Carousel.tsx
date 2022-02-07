@@ -71,6 +71,11 @@ export default function Carousel(userProps: ICarouselProps) {
     },
     [setExternalOffset, setLocalOffset]
   );
+  const setMaxOffset = props.setMaxOffset;
+  const maxOffset = props.children.length;
+  useEffect(() => {
+    if(setMaxOffset) setMaxOffset(maxOffset)
+  }, [setMaxOffset, maxOffset])
 
   /**
    * Returns current index of current group
@@ -281,6 +286,7 @@ export interface ICarouselProps {
   setCurrentGroup?: ((group: number) => void) | null;
   setGroupsLength?: ((length: number) => void) | null;
   setOffset?: ((offset: number) => void) | null;
+  setMaxOffset?: ((offset: number) => void) | null;
 }
 
 export interface IAnimationState {
