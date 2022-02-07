@@ -9,7 +9,6 @@ import {
   Directions,
   Infinite,
   Slide,
-  ISlideObj,
   Throttle,
 } from '../../types/types';
 import defaultProps from './carouselDefaultProps';
@@ -162,6 +161,7 @@ export default function Carousel(userProps: ICarouselProps) {
       <div className={classes.window}>
         <SlidesProvider {...slidesProps}>{slides}</SlidesProvider>
       </div>
+      {/* TODO FIX(ADD es6 import) */}
       {props.progressBarCustom ? null : (
         <ProgressBar
           classNameContainer={props.progressBarContainerClassName}
@@ -180,7 +180,7 @@ export default function Carousel(userProps: ICarouselProps) {
           dotsActiveClassName={props.dotsActiveClassName}
         />
       )}
-      {/* TODO FIX(ADD es6 import) */}
+    
       <ControlButton
         type={Directions.Left}
         onClick={() => slide(Directions.Left)}

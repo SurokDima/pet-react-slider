@@ -1,4 +1,4 @@
-import React, { useState, Suspense, lazy, useCallback } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 
 import classes from './styles/App.module.scss';
 import { nanoid } from 'nanoid';
