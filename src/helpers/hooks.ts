@@ -201,13 +201,10 @@ export function useGroups(
 export default function useProgress(
   anim: boolean,
   time: number,
-  setExternalProgress?: (progress: number) => void
-): number {
-  const [progress, setProgress] = useState(0);
-
+  setProgress: (progress: number) => void
+): void {
   useEffect(() => {
     setProgress(0);
-    if(setExternalProgress) setExternalProgress(0);
 
     if (anim) {
       let start = 0;
@@ -218,7 +215,6 @@ export default function useProgress(
 
         const progress = (timestamp - start) / time;
         setProgress(progress);
-        if (setExternalProgress) setExternalProgress(progress);
 
         if (progress <= 1) {
           reqId = requestAnimationFrame(step);
@@ -228,7 +224,5 @@ export default function useProgress(
       requestAnimationFrame(step);
       return () => cancelAnimationFrame(reqId);
     }
-  }, [anim, time, setExternalProgress]);
-
-  return progress;
+  }, [anim, time, setProgress]);
 }

@@ -66,7 +66,6 @@ export default function Carousel(userProps: ICarouselProps) {
     return groups.length - 1;
   };
 
-
   if (props.setGroup) props.setGroup(getCurrentGroup());
   if (props.setGroupLength) props.setGroupLength(groups.length);
 
@@ -138,10 +137,10 @@ export default function Carousel(userProps: ICarouselProps) {
     setGroups
   );
 
-  const progress = useProgress(
+  useProgress(
     isPlay && !animation.isSliding,
     props.autoplaySpeed * 1000,
-    props.setProgress ?? undefined
+    props.progressState.setProgress
   );
 
   const slidesProps: ISlidesProps = {
@@ -160,7 +159,7 @@ export default function Carousel(userProps: ICarouselProps) {
         <ProgressBar
           classNameContainer={props.progressBarContainerClassName}
           className={props.progressBarClassName}
-          progress={progress}
+          progress={props.progressState.progress}
         />
       )}
 
@@ -219,7 +218,7 @@ export interface ICarouselProps {
   progressBarClassName?: string | null;
   progressBarCustom?: boolean;
 
-  setProgress?: ((progress: number) => void) | null;
+  progressState?: IProgressState;
   setGroup?: ((group: number) => void) | null;
   setGroupLength?: ((groupLength: number) => void) | null;
 }
@@ -227,4 +226,9 @@ export interface ICarouselProps {
 export interface IAnimationState {
   transition: number;
   isSliding: boolean;
+}
+
+export interface IProgressState {
+  progress: number;
+  setProgress: (progress: number) => void;
 }

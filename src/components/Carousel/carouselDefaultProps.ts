@@ -22,7 +22,11 @@ const carouselDefaultProps: Required<ICarouselProps> = {
 
   setGroup: null,
   setGroupLength: null,
-  setProgress: null,
+
+  progressState: {
+    progress: 0,
+    setProgress: () => {},
+  },
 };
 
 export default carouselDefaultProps;
