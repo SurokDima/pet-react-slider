@@ -20,8 +20,10 @@ const carouselDefaultProps: Required<ICarouselProps> = {
   progressBarContainerClassName: null,
   progressBarCustom: false,
 
-  setGroup: null,
-  setGroupLength: null,
+  groupsState: {
+    setCurrentGroup: () => {},
+    setGroupsLength: () => {},
+  },
 
   progressState: {
     progress: 0,

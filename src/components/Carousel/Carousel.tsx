@@ -66,8 +66,10 @@ export default function Carousel(userProps: ICarouselProps) {
     return groups.length - 1;
   };
 
-  if (props.setGroup) props.setGroup(getCurrentGroup());
-  if (props.setGroupLength) props.setGroupLength(groups.length);
+  useEffect(() => {
+    props.groupsState.setCurrentGroup(getCurrentGroup());
+    props.groupsState.setGroupsLength(groups.length);
+  }, [getCurrentGroup(), groups.length])
 
   const [animation, setAnimation] = useAnimation({
     transition: 0,
@@ -219,8 +221,7 @@ export interface ICarouselProps {
   progressBarCustom?: boolean;
 
   progressState?: IProgressState;
-  setGroup?: ((group: number) => void) | null;
-  setGroupLength?: ((groupLength: number) => void) | null;
+  groupsState?: IGroupsState;
 }
 
 export interface IAnimationState {
@@ -231,4 +232,9 @@ export interface IAnimationState {
 export interface IProgressState {
   progress: number;
   setProgress: (progress: number) => void;
+}
+
+export interface IGroupsState {
+  setCurrentGroup: (group: number) => void,
+  setGroupsLength: (length: number) => void,
 }
