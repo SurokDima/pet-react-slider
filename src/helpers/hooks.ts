@@ -197,3 +197,38 @@ export function useGroups(
   const [groupsState, setGroups] = useState<IGroup[]>(groups);
   return [groupsState, setGroups];
 }
+
+export default function useProgress(
+  anim: boolean,
+  time: number,
+  setExternalProgress?: (progress: number) => void
+): number {
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    setProgress(0);
+    if(setExternalProgress) setExternalProgress(0);
+
+    if (anim) {
+      let start = 0;
+      let reqId = 0;
+      
+      const step = (timestamp: number) => {
+        start = start === 0 ? timestamp : start;
+
+        const progress = (timestamp - start) / time;
+        setProgress(progress);
+        if (setExternalProgress) setExternalProgress(progress);
+
+        if (progress <= 1) {
+          reqId = requestAnimationFrame(step);
+        }
+      };
+
+      requestAnimationFrame(step);
+      return () => cancelAnimationFrame(reqId);
+    }
+  }, [anim, time, setExternalProgress]);
+
+  return progress;
+}

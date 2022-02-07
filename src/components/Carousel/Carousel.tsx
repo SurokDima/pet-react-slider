@@ -13,7 +13,7 @@ import {
   Throttle,
 } from '../../types/types';
 import defaultProps from './carouselDefaultProps';
-import {
+import useProgress, {
   useAnimation,
   useAutoplay,
   useCircularOffset,
@@ -58,8 +58,8 @@ export default function Carousel(userProps: ICarouselProps) {
     return groups.length - 1;
   };
 
-  if(props.setGroup) props.setGroup(getCurrentGroup());
-  if(props.setGroupLength) props.setGroupLength(groups.length);
+  if (props.setGroup) props.setGroup(getCurrentGroup());
+  if (props.setGroupLength) props.setGroupLength(groups.length);
 
   const [circularOffset, setOffset] = useCircularOffset(
     props.startOffset,
@@ -92,23 +92,32 @@ export default function Carousel(userProps: ICarouselProps) {
     throttle,
   ]);
 
-  const slideTo = useCallback((offset: number): void => {
-    if (!animation.isSliding) {
-      setThrottle(false);
-      setAnimation({
-        transition: props.animationDuration,
-        isSliding: true,
-      });
-      setOffset(offset);
-    }
-  }, [animation.isSliding, props.animationDuration, setAnimation, setOffset]);
+  const slideTo = useCallback(
+    (offset: number): void => {
+      if (!animation.isSliding) {
+        setThrottle(false);
+        setAnimation({
+          transition: props.animationDuration,
+          isSliding: true,
+        });
+        setOffset(offset);
+      }
+    },
+    [animation.isSliding, props.animationDuration, setAnimation, setOffset]
+  );
 
   //TODO FIX slide and slideTO
-  const slide = useCallback((direction: Directions): void => {
-    slideTo(circularOffset.rotate(direction));
-  }, [circularOffset, slideTo]);
+  const slide = useCallback(
+    (direction: Directions): void => {
+      slideTo(circularOffset.rotate(direction));
+    },
+    [circularOffset, slideTo]
+  );
 
-  const slideRightCallback = useCallback(() => slide(Directions.Right), [slide]);
+  const slideRightCallback = useCallback(
+    () => slide(Directions.Right),
+    [slide]
+  );
 
   const [isPlay] = useAutoplay(
     props.autoplay,
@@ -128,6 +137,12 @@ export default function Carousel(userProps: ICarouselProps) {
     setGroups
   );
 
+  const progress = useProgress(
+    isPlay && !animation.isSliding,
+    props.autoplaySpeed * 1000,
+    props.setProgress ?? undefined
+  );
+
   const slidesProps: ISlidesProps = {
     slideWidth,
     transition: animation.transition,
@@ -140,15 +155,13 @@ export default function Carousel(userProps: ICarouselProps) {
         <SlidesProvider {...slidesProps}>{slides}</SlidesProvider>
       </div>
 
-      <ProgressBar
-        anim={isPlay && !animation.isSliding}
-        time={(props.autoplaySpeed) * 1000}
-        setExternalProgress={props.setProgress}
-        key={+isPlay + circularOffset.offset}
-        classNameContainer={props.progressBarContainerClassName}
-        className={props.progressBarClassName}
-        isCustom={props.progressBarCustom}
-      />
+      {props.progressBarCustom ? null : (
+        <ProgressBar
+          classNameContainer={props.progressBarContainerClassName}
+          className={props.progressBarClassName}
+          progress={progress}
+        />
+      )}
 
       <DotsProvider
         groups={groups}
@@ -188,7 +201,7 @@ export interface ICarouselProps {
   infinite?: Infinite;
   slidesToShow?: number;
   slidesToScroll?: number;
-  
+
   animationDuration?: number;
 
   autoplay?: boolean;
