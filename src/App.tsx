@@ -36,7 +36,8 @@ function App() {
         <Carousel
           progressState={{progress, setProgress}}
           groupsState={{setCurrentGroup: setGroup, setGroupsLength}}
-          progressBarCustom={true}
+          progressBarCustom={false}
+          dotsCustom={true}
         >
           {slides.map(slide => (
             <div className={classes.slide} key={slide.id}>
