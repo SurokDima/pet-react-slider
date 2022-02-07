@@ -3,6 +3,7 @@ import React, { useState, Suspense, lazy } from 'react';
 import classes from './styles/App.module.scss';
 import { nanoid } from 'nanoid';
 import ProgressBar from './components/ProgressBar/ProgressBar';
+import { useOffset } from './helpers/hooks';
 
 const Carousel = lazy(() => import('./components/Carousel/Carousel'));
 
@@ -24,18 +25,21 @@ function App() {
   const [progress, setProgress] = useState(0);
   const [groupLength, setGroupsLength] = useState(0);
   const [group, setGroup] = useState(0);
+  const [offset, setOffset] = useState(0);
 
   const loading = <h1>Loading</h1>;
 
   return (
     <div className={classes.app}>
       <Suspense fallback={loading}>
-        <h1>{progress * 100}%</h1>
+        <h1>Local progress: {progress * 100}%</h1>
         <h1>{groupLength}</h1>
         <h1>{group + 1}</h1>
+        <h1>Global progress: {offset / 6}</h1>
         <Carousel
           progressState={{progress, setProgress}}
           groupsState={{setCurrentGroup: setGroup, setGroupsLength}}
+          offsetState={{offset, setOffset}}
           progressBarCustom={false}
           dotsCustom={true}
         >
