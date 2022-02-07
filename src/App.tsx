@@ -22,7 +22,7 @@ function App() {
   ]);
 
   const [progress, setProgress] = useState(0);
-  const [groupLength, setGroupLength] = useState(0);
+  const [groupLength, setGroupsLength] = useState(0);
   const [group, setGroup] = useState(0);
 
   const loading = <h1>Loading</h1>;
@@ -35,6 +35,7 @@ function App() {
         <h1>{group + 1}</h1>
         <Carousel
           progressState={{progress, setProgress}}
+          groupsState={{setCurrentGroup: setGroup, setGroupsLength}}
           progressBarCustom={true}
         >
           {slides.map(slide => (
