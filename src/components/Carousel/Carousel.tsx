@@ -32,7 +32,7 @@ export default function Carousel(userProps: ICarouselProps) {
 
   const [width, ref] = useWidth<HTMLDivElement>(0);
 
-  const [slides, setSlides] = useState<ISlideObj[]>(
+  const [slides, setSlides] = useState(
     initSlideObjects(props.children, props.slidesToShow, props.infinite)
   );
   const slideWidth = width / props.slidesToShow;
@@ -66,10 +66,13 @@ export default function Carousel(userProps: ICarouselProps) {
     return groups.length - 1;
   };
 
+  const currentGroup = getCurrentGroup();
   useEffect(() => {
-    props.groupsState.setCurrentGroup(getCurrentGroup());
-    props.groupsState.setGroupsLength(groups.length);
-  }, [getCurrentGroup(), groups.length])
+    if (props.dotsCustom) {
+      props.groupsState.setCurrentGroup(currentGroup);
+      props.groupsState.setGroupsLength(groups.length);
+    }
+  }, [currentGroup, groups.length, props.dotsCustom, props.groupsState]); //TODO FIX groups state
 
   const [animation, setAnimation] = useAnimation({
     transition: 0,
@@ -139,10 +142,13 @@ export default function Carousel(userProps: ICarouselProps) {
     setGroups
   );
 
+  // Deafult progress logic(used if props.progressBarCustom === false)
+  const [progress, setProgress] = useState(0);
+
   useProgress(
     isPlay && !animation.isSliding,
     props.autoplaySpeed * 1000,
-    props.progressState.setProgress
+    props.progressBarCustom ? props.progressState.setProgress : setProgress
   );
 
   const slidesProps: ISlidesProps = {
@@ -156,24 +162,25 @@ export default function Carousel(userProps: ICarouselProps) {
       <div className={classes.window}>
         <SlidesProvider {...slidesProps}>{slides}</SlidesProvider>
       </div>
-
       {props.progressBarCustom ? null : (
         <ProgressBar
           classNameContainer={props.progressBarContainerClassName}
           className={props.progressBarClassName}
-          progress={props.progressState.progress}
+          progress={progress}
         />
       )}
-
-      <DotsProvider
-        groups={groups}
-        current={getCurrentGroup()}
-        onClickHandler={slideTo}
-        classNameProvider={props.dotsProviderClassName}
-        dotsClassName={props.dotsClassName}
-        dotsActiveClassName={props.dotsActiveClassName}
-      />
-
+      {/* TODO FIX(ADD es6 import) */}
+      {props.dotsCustom ? null : (
+        <DotsProvider
+          groups={groups}
+          current={currentGroup}
+          onClickHandler={slideTo}
+          classNameProvider={props.dotsProviderClassName}
+          dotsClassName={props.dotsClassName}
+          dotsActiveClassName={props.dotsActiveClassName}
+        />
+      )}
+      {/* TODO FIX(ADD es6 import) */}
       <ControlButton
         type={Directions.Left}
         onClick={() => slide(Directions.Left)}
@@ -214,8 +221,8 @@ export interface ICarouselProps {
   dotsClassName?: string | null;
   dotsActiveClassName?: string | null;
   dotsProviderClassName?: string | null;
+  dotsCustom?: boolean;
 
-  //TODO Implement all below
   progressBarContainerClassName?: string | null;
   progressBarClassName?: string | null;
   progressBarCustom?: boolean;
@@ -235,6 +242,6 @@ export interface IProgressState {
 }
 
 export interface IGroupsState {
-  setCurrentGroup: (group: number) => void,
-  setGroupsLength: (length: number) => void,
+  setCurrentGroup: (group: number) => void;
+  setGroupsLength: (length: number) => void;
 }

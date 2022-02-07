@@ -12,9 +12,10 @@ const carouselDefaultProps: Required<ICarouselProps> = {
   animationDuration: 0.5,
   infinite: 'infinite',
 
-  dotsActiveClassName: '',
-  dotsClassName: '',
-  dotsProviderClassName: '',
+  dotsActiveClassName: null,
+  dotsClassName: null,
+  dotsProviderClassName: null,
+  dotsCustom: false,
 
   progressBarClassName: null,
   progressBarContainerClassName: null,
