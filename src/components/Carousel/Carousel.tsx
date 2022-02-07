@@ -45,7 +45,7 @@ export default function Carousel(userProps: ICarouselProps) {
     props.slidesToShow,
     props.infinite
   );
-  
+
   const [circularOffset, setLocalOffset] = useCircularOffset(
     props.startOffset,
     props.slidesToShow,
@@ -54,10 +54,13 @@ export default function Carousel(userProps: ICarouselProps) {
     props.infinite
   );
   const setExternalOffset = props.setOffset;
-  const setOffset = useCallback((offset: number): void => {
-    setLocalOffset(offset);
-    if(setExternalOffset) setExternalOffset(offset);
-  }, [setExternalOffset, setLocalOffset]);
+  const setOffset = useCallback(
+    (offset: number): void => {
+      setLocalOffset(offset);
+      if (setExternalOffset) setExternalOffset(offset);
+    },
+    [setExternalOffset, setLocalOffset]
+  );
 
   const getCurrentGroup = (): number => {
     for (let i = 0; i < groups.length - 1; i++) {
@@ -128,6 +131,7 @@ export default function Carousel(userProps: ICarouselProps) {
     () => slide(Directions.Right),
     [slide]
   );
+  const slideLeftCallback = useCallback(() => slide(Directions.Left), [slide]);
 
   const [isPlay] = useAutoplay(
     props.autoplay,
@@ -150,10 +154,13 @@ export default function Carousel(userProps: ICarouselProps) {
   // Deafult progress logic(used if props.progressBarCustom === false)
   const [progress, setLocalProgress] = useState(0);
   const setExternalProgress = props.setProgress;
-  const setProgress = useCallback((progress: number): void => {
-    setLocalProgress(progress);
-    if(setExternalProgress) setExternalProgress(progress);
-  }, [setLocalProgress, setExternalProgress])
+  const setProgress = useCallback(
+    (progress: number): void => {
+      setLocalProgress(progress);
+      if (setExternalProgress) setExternalProgress(progress);
+    },
+    [setLocalProgress, setExternalProgress]
+  );
 
   useProgress(
     isPlay && !animation.isSliding,
@@ -191,10 +198,10 @@ export default function Carousel(userProps: ICarouselProps) {
           dotsActiveClassName={props.dotsActiveClassName}
         />
       )}
-    
+
       <ControlButton
         type={Directions.Left}
-        onClick={() => slide(Directions.Left)}
+        onClick={slideLeftCallback}
         className={props.prevButton.className}
         style={props.prevButton.style}
       >
@@ -202,7 +209,7 @@ export default function Carousel(userProps: ICarouselProps) {
       </ControlButton>
       <ControlButton
         type={Directions.Right}
-        onClick={() => slide(Directions.Right)}
+        onClick={slideRightCallback}
         className={props.nextButton.className}
         style={props.nextButton.style}
       >
@@ -238,16 +245,15 @@ export interface ICarouselProps {
   progressBarClassName?: string | null;
   hideDefaultProgress?: boolean;
 
-  offsetCustom?: boolean,
+  offsetCustom?: boolean;
 
   setProgress: (progress: number) => void;
   setCurrentGroup: (group: number) => void;
   setGroupsLength: (length: number) => void;
-  setOffset: (offset: number) => void
+  setOffset: (offset: number) => void;
 }
 
 export interface IAnimationState {
   transition: number;
   isSliding: boolean;
 }
-
