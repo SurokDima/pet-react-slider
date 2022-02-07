@@ -2,6 +2,7 @@ import React, { useState, Suspense, lazy, useCallback } from 'react';
 
 import classes from './styles/App.module.scss';
 import { nanoid } from 'nanoid';
+import ProgressBar from './components/ProgressBar/ProgressBar';
 
 const Carousel = lazy(() => import('./components/Carousel/Carousel'));
 
@@ -21,6 +22,8 @@ function App() {
   ]);
 
   const [progress, setProgress] = useState(0);
+  const [groupLength, setGroupLength] = useState(0);
+  const [group, setGroup] = useState(0);
 
   const loading = <h1>Loading</h1>;
 
@@ -28,13 +31,21 @@ function App() {
     <div className={classes.app}>
       <Suspense fallback={loading}>
         <h1>{progress * 100}%</h1>
-        <Carousel setProgress={setProgress} progressBarCustom={false}>
+        <h1>{groupLength}</h1>
+        <h1>{group}%</h1>
+        <Carousel
+          setProgress={setProgress}
+          setGroup={setGroup}
+          setGroupLength={setGroupLength}
+          progressBarCustom={true}
+        >
           {slides.map(slide => (
             <div className={classes.slide} key={slide.id}>
               <h2 className={classes.slideContent}>{slide.content}</h2>
             </div>
           ))}
         </Carousel>
+
         <button
           onClick={() => {
             setSlides([
@@ -61,6 +72,7 @@ function App() {
         >
           New Slide At End
         </button>
+        <ProgressBar progress={progress} />
       </Suspense>
     </div>
   );
