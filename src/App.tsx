@@ -25,6 +25,7 @@ function App() {
   const [groupLength, setGroupsLength] = useState(0);
   const [group, setGroup] = useState(0);
   const [offset, setOffset] = useState(0);
+  const [maxOffset, setMaxOffset] = useState(0);
 
   const loading = <h1>Loading</h1>;
 
@@ -34,13 +35,12 @@ function App() {
         <h1>Local progress: {progress * 100}%</h1>
         <h1>{groupLength}</h1>
         <h1>{group + 1}</h1>
-        <h1>Global progress: {offset / 6}</h1>
+        <h1>Global progress: {(offset)/ maxOffset}</h1>
         <Carousel
           setGroupsLength={setGroupsLength}
           setOffset={setOffset}
           setCurrentGroup={setGroup}
-          hideDefaultProgress={true}
-          hideDefaultDots={true}
+          setMaxOffset={setMaxOffset}
         >
           {slides.map(slide => (
             <div className={classes.slide} key={slide.id}>
