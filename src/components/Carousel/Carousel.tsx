@@ -46,6 +46,14 @@ export default function Carousel(userProps: ICarouselProps) {
     props.infinite
   );
 
+  const [circularOffset, setOffset] = useCircularOffset(
+    props.startOffset,
+    props.slidesToShow,
+    props.slidesToScroll,
+    trackLength,
+    props.infinite
+  );
+
   const getCurrentGroup = (): number => {
     for (let i = 0; i < groups.length - 1; i++) {
       if (
@@ -58,16 +66,9 @@ export default function Carousel(userProps: ICarouselProps) {
     return groups.length - 1;
   };
 
+
   if (props.setGroup) props.setGroup(getCurrentGroup());
   if (props.setGroupLength) props.setGroupLength(groups.length);
-
-  const [circularOffset, setOffset] = useCircularOffset(
-    props.startOffset,
-    props.slidesToShow,
-    props.slidesToScroll,
-    trackLength,
-    props.infinite
-  );
 
   const [animation, setAnimation] = useAnimation({
     transition: 0,
