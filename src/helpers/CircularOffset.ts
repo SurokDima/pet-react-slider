@@ -1,7 +1,7 @@
 import { Directions, Infinite } from '../types/types';
 
 export class CircularOffset {
-  private readonly _offset: number;
+  private _offset: number;
 
   private readonly _slidesToShow: number;
   private readonly _slidesToScroll: number;
@@ -56,6 +56,10 @@ export class CircularOffset {
 
     return direction;
   };
+
+  public setOffset(offset: number): void {
+    this._offset = offset;
+  }
 
   private _rotateLoop(direction: Directions): number {
     if (this._offset === 0 && direction === Directions.Left) {

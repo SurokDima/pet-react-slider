@@ -1,11 +1,7 @@
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { CircularOffset } from './CircularOffset';
 import { IGroup, Infinite, Slide, ISlideObj } from '../types/types';
-import {
-  childrenIsChanged,
-  initGroups,
-  initSlideObjects,
-} from './helpers';
+import { childrenIsChanged, initGroups, initSlideObjects } from './helpers';
 import { IAnimationState } from '../components/Carousel/Carousel';
 
 /**
@@ -36,23 +32,24 @@ export function useWidth<T extends HTMLElement>(
  *
  * @param autoplay - default value
  * @param autoplaySpeed - time between slides (in sec)
- * @param currentIndex - current index
+ * @param currentOffset - current index
  * @param slide - function to move to next slide
  */
 export function useAutoplay(
   autoplay: boolean,
   autoplaySpeed: number,
-  currentIndex: number,
+  currentOffset: number,
+  isSliding: boolean,
   slide: () => void
 ): [boolean, (isPlay: boolean) => void] {
   const [isPlay, setIsPlay] = useState<boolean>(autoplay);
 
   useEffect(() => {
-    if (isPlay) {
+    if (isPlay && !isSliding) {
       const timer = setTimeout(() => slide(), autoplaySpeed * 1000);
       return () => clearTimeout(timer);
     }
-  }, [isPlay, slide, currentIndex, autoplaySpeed]);
+  }, [isPlay, slide, currentOffset, autoplaySpeed, isSliding]);
 
   return [isPlay, setIsPlay];
 }
@@ -84,13 +81,16 @@ export function useCircularOffset(
   infinite: Infinite
 ): [CircularOffset, (offset: number) => void] {
   const [offset, setOffset] = useOffset(startOffset, slidesToShow, infinite);
-  const circular = new CircularOffset(
-    offset,
-    trackLength,
-    slidesToShow,
-    slidesToScroll,
-    infinite
+  const [circular] = useState<CircularOffset>(
+    new CircularOffset(
+      offset,
+      trackLength,
+      slidesToShow,
+      slidesToScroll,
+      infinite
+    )
   );
+  circular.setOffset(offset);
 
   return [circular, setOffset];
 }
@@ -105,14 +105,13 @@ export function useAnimation(
       setTimeout(
         () =>
           setAnimation({
-            ...animation,
             transition: 0,
             isSliding: false,
           }),
         animation.transition * 1000
       );
     }
-  }, [animation]);
+  }, [animation.isSliding, animation.transition]);
 
   return [animation, setAnimation];
 }
