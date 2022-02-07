@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import SlidesProvider, {
   ISlidesProviderProps as ISlidesProps,
@@ -25,6 +25,7 @@ import ControlButton from '../ControlButton/ControlButton';
 import DotsProvider from '../DotsProvider/DotsProvider';
 
 import classes from '../../styles/Carousel.module.scss';
+import ProgressBar from '../ProgressBar/ProgressBar';
 
 export default function Carousel(userProps: ICarouselProps) {
   const props: Required<ICarouselProps> = { ...defaultProps, ...userProps };
@@ -57,6 +58,9 @@ export default function Carousel(userProps: ICarouselProps) {
     return groups.length - 1;
   };
 
+  if(props.setGroup) props.setGroup(getCurrentGroup());
+  if(props.setGroupLength) props.setGroupLength(groups.length);
+
   const [circularOffset, setOffset] = useCircularOffset(
     props.startOffset,
     props.slidesToShow,
@@ -88,38 +92,30 @@ export default function Carousel(userProps: ICarouselProps) {
     throttle,
   ]);
 
-  //TODO FIX slide and slideTO
-  const slide = (direction: Directions): void => {
+  const slideTo = useCallback((offset: number): void => {
     if (!animation.isSliding) {
       setThrottle(false);
       setAnimation({
-        ...animation,
-        transition: props.animationDuration,
-        isSliding: true,
-      });
-      setOffset(circularOffset.rotate(direction));
-    }
-  };
-
-  const slideTo = (offset: number): void => {
-    if (!animation.isSliding) {
-      setThrottle(false);
-      setAnimation({
-        ...animation,
         transition: props.animationDuration,
         isSliding: true,
       });
       setOffset(offset);
     }
-  };
+  }, [animation.isSliding, props.animationDuration, setAnimation, setOffset]);
 
-  console.log();
+  //TODO FIX slide and slideTO
+  const slide = useCallback((direction: Directions): void => {
+    slideTo(circularOffset.rotate(direction));
+  }, [circularOffset, slideTo]);
 
-  useAutoplay(
+  const slideRightCallback = useCallback(() => slide(Directions.Right), [slide]);
+
+  const [isPlay] = useAutoplay(
     props.autoplay,
-    props.autoplaySpeed + props.animationDuration,
+    props.autoplaySpeed,
     circularOffset.offset,
-    () => slide(Directions.Right)
+    animation.isSliding,
+    slideRightCallback
   );
 
   useDynamicChildren(
@@ -144,11 +140,21 @@ export default function Carousel(userProps: ICarouselProps) {
         <SlidesProvider {...slidesProps}>{slides}</SlidesProvider>
       </div>
 
+      <ProgressBar
+        anim={isPlay && !animation.isSliding}
+        time={(props.autoplaySpeed) * 1000}
+        setExternalProgress={props.setProgress}
+        key={+isPlay + circularOffset.offset}
+        classNameContainer={props.progressBarContainerClassName}
+        className={props.progressBarClassName}
+        isCustom={props.progressBarCustom}
+      />
+
       <DotsProvider
         groups={groups}
         current={getCurrentGroup()}
         onClickHandler={slideTo}
-        className={props.dotsProviderClassName}
+        classNameProvider={props.dotsProviderClassName}
         dotsClassName={props.dotsClassName}
         dotsActiveClassName={props.dotsActiveClassName}
       />
@@ -178,16 +184,30 @@ export interface ICarouselProps {
 
   prevButton?: IControlButton;
   nextButton?: IControlButton;
+
   infinite?: Infinite;
   slidesToShow?: number;
   slidesToScroll?: number;
+  
   animationDuration?: number;
+
   autoplay?: boolean;
   autoplaySpeed?: number;
+
   startOffset?: number;
-  dotsClassName?: string;
-  dotsActiveClassName?: string;
-  dotsProviderClassName?: string;
+
+  dotsClassName?: string | null;
+  dotsActiveClassName?: string | null;
+  dotsProviderClassName?: string | null;
+
+  //TODO Implement all below
+  progressBarContainerClassName?: string | null;
+  progressBarClassName?: string | null;
+  progressBarCustom?: boolean;
+
+  setProgress?: ((progress: number) => void) | null;
+  setGroup?: ((group: number) => void) | null;
+  setGroupLength?: ((groupLength: number) => void) | null;
 }
 
 export interface IAnimationState {

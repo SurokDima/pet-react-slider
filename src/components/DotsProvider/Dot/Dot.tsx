@@ -4,16 +4,16 @@ import classes from '../../../styles/Dot.module.scss';
 
 export default function Dot({
   isCurrent,
-  className,
+  classNameDot,
   classNameActive,
   targetOffset,
   onClickHandler,
   ...props
 }: IDotProps) {
-  const cls = [className.length === 0 ? classes.dot : className];
+  const cls = [classNameDot ?? classes.dot];
 
   if (isCurrent)
-    cls.push(classNameActive.length === 0 ? classes.active : classNameActive);
+    cls.push(classNameActive ?? classes.active);
 
   return (
     <div
@@ -28,6 +28,6 @@ interface IDotProps extends HTMLAttributes<HTMLDivElement> {
   isCurrent: boolean;
   targetOffset: number;
   onClickHandler: (offset: number) => void;
-  classNameActive: string;
-  className: string;
+  classNameActive?: string | null;
+  classNameDot?: string | null;
 }
