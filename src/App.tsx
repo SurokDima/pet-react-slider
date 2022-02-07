@@ -32,7 +32,7 @@ function App() {
       <Suspense fallback={loading}>
         <h1>{progress * 100}%</h1>
         <h1>{groupLength}</h1>
-        <h1>{group}%</h1>
+        <h1>{group + 1}</h1>
         <Carousel
           setProgress={setProgress}
           setGroup={setGroup}
