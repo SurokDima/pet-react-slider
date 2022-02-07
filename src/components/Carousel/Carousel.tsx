@@ -46,15 +46,18 @@ export default function Carousel(userProps: ICarouselProps) {
     props.infinite
   );
   
-  const setOffset = props.offsetState.setOffset;
-
-  const circularOffset = useCircularOffset(
-    props.offsetState.offset,
+  const [circularOffset, setLocalOffset] = useCircularOffset(
+    props.startOffset,
     props.slidesToShow,
     props.slidesToScroll,
     trackLength,
     props.infinite
   );
+  const setExternalOffset = props.setOffset;
+  const setOffset = useCallback((offset: number): void => {
+    setLocalOffset(offset);
+    if(setExternalOffset) setExternalOffset(offset);
+  }, [setExternalOffset, setLocalOffset]);
 
   const getCurrentGroup = (): number => {
     for (let i = 0; i < groups.length - 1; i++) {
@@ -70,11 +73,11 @@ export default function Carousel(userProps: ICarouselProps) {
 
   const currentGroup = getCurrentGroup();
   useEffect(() => {
-    if (props.dotsCustom) {
-      props.groupsState.setCurrentGroup(currentGroup);
-      props.groupsState.setGroupsLength(groups.length);
+    if (props.hideDefaultDots) {
+      props.setCurrentGroup(currentGroup);
+      props.setGroupsLength(groups.length);
     }
-  }, [currentGroup, groups.length, props.dotsCustom, props.groupsState]); //TODO FIX groups state
+  }, [currentGroup, groups.length, props, props.hideDefaultDots]); //TODO FIX groups state
 
   const [animation, setAnimation] = useAnimation({
     transition: 0,
@@ -145,12 +148,17 @@ export default function Carousel(userProps: ICarouselProps) {
   );
 
   // Deafult progress logic(used if props.progressBarCustom === false)
-  const [progress, setProgress] = useState(0);
+  const [progress, setLocalProgress] = useState(0);
+  const setExternalProgress = props.setProgress;
+  const setProgress = useCallback((progress: number): void => {
+    setLocalProgress(progress);
+    if(setExternalProgress) setExternalProgress(progress);
+  }, [setLocalProgress, setExternalProgress])
 
   useProgress(
     isPlay && !animation.isSliding,
     props.autoplaySpeed * 1000,
-    props.progressBarCustom ? props.progressState.setProgress : setProgress
+    setProgress
   );
 
   const slidesProps: ISlidesProps = {
@@ -165,7 +173,7 @@ export default function Carousel(userProps: ICarouselProps) {
         <SlidesProvider {...slidesProps}>{slides}</SlidesProvider>
       </div>
       {/* TODO FIX(ADD es6 import) */}
-      {props.progressBarCustom ? null : (
+      {props.hideDefaultProgress ? null : (
         <ProgressBar
           classNameContainer={props.progressBarContainerClassName}
           className={props.progressBarClassName}
@@ -173,7 +181,7 @@ export default function Carousel(userProps: ICarouselProps) {
         />
       )}
       {/* TODO FIX(ADD es6 import) */}
-      {props.dotsCustom ? null : (
+      {props.hideDefaultDots ? null : (
         <DotsProvider
           groups={groups}
           current={currentGroup}
@@ -224,15 +232,18 @@ export interface ICarouselProps {
   dotsClassName?: string | null;
   dotsActiveClassName?: string | null;
   dotsProviderClassName?: string | null;
-  dotsCustom?: boolean;
+  hideDefaultDots?: boolean;
 
   progressBarContainerClassName?: string | null;
   progressBarClassName?: string | null;
-  progressBarCustom?: boolean;
+  hideDefaultProgress?: boolean;
 
-  progressState?: IProgressState;
-  groupsState?: IGroupsState;
-  offsetState?: IOffsetState;
+  offsetCustom?: boolean,
+
+  setProgress: (progress: number) => void;
+  setCurrentGroup: (group: number) => void;
+  setGroupsLength: (length: number) => void;
+  setOffset: (offset: number) => void
 }
 
 export interface IAnimationState {
@@ -240,17 +251,3 @@ export interface IAnimationState {
   isSliding: boolean;
 }
 
-export interface IProgressState {
-  progress: number;
-  setProgress: (progress: number) => void;
-}
-
-export interface IGroupsState {
-  setCurrentGroup: (group: number) => void;
-  setGroupsLength: (length: number) => void;
-}
-
-export interface IOffsetState {
-  offset: number,
-  setOffset: (offset: number) => void
-}

@@ -15,24 +15,18 @@ const carouselDefaultProps: Required<ICarouselProps> = {
   dotsActiveClassName: null,
   dotsClassName: null,
   dotsProviderClassName: null,
-  dotsCustom: false,
+  hideDefaultDots: false,
 
   progressBarClassName: null,
   progressBarContainerClassName: null,
-  progressBarCustom: false,
+  hideDefaultProgress: false,
 
-  groupsState: {
-    setCurrentGroup: () => {},
-    setGroupsLength: () => {},
-  },
-  progressState: {
-    progress: 0,
-    setProgress: () => {},
-  },
-  offsetState: {
-    offset: 0,
-    setOffset: () => {},
-  }
+  offsetCustom: false,
+
+  setCurrentGroup: () => {},
+  setGroupsLength: () => {},
+  setProgress: () => {},
+  setOffset: () => {},
 };
 
 export default carouselDefaultProps;

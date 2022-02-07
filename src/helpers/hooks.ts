@@ -59,7 +59,7 @@ export function useOffset(
   slidesToShow: number,
   infinite: Infinite
 ): [number, (arg: number) => void] {
-  return useState(
+  return useState<number>(
     startOffset + (infinite === 'infinite' ? Math.ceil(slidesToShow) : 0)
   );
 }
@@ -74,12 +74,13 @@ export function useOffset(
  * @param infinite
  */
 export function useCircularOffset(
-  offset: number,
+  startOffset: number,
   slidesToShow: number,
   slidesToScroll: number,
   trackLength: number,
   infinite: Infinite
-): CircularOffset {
+): [CircularOffset, (offset: number) => void] {
+  const [offset, setOffset] = useOffset(startOffset, slidesToShow, infinite);
   const [circular] = useState<CircularOffset>(
     new CircularOffset(
       offset,
@@ -91,7 +92,7 @@ export function useCircularOffset(
   );
   circular.setOffset(offset);
 
-  return circular;
+  return [circular, setOffset];
 }
 
 export function useAnimation(
