@@ -18,6 +18,7 @@ import useProgress, {
   useCircularOffset,
   useDynamicChildren,
   useGroups,
+  useOffset,
   useWidth,
 } from '../../helpers/hooks';
 import ControlButton from '../ControlButton/ControlButton';
@@ -38,15 +39,17 @@ export default function Carousel(userProps: ICarouselProps) {
   const trackLength = slides.length;
 
   const [groups, setGroups] = useGroups(
-    props.children.length, //TODO Optimize this
+    props.children.length,
     props.startOffset,
     props.slidesToScroll,
     props.slidesToShow,
     props.infinite
   );
+  
+  const setOffset = props.offsetState.setOffset;
 
-  const [circularOffset, setOffset] = useCircularOffset(
-    props.startOffset,
+  const circularOffset = useCircularOffset(
+    props.offsetState.offset,
     props.slidesToShow,
     props.slidesToScroll,
     trackLength,
@@ -229,6 +232,7 @@ export interface ICarouselProps {
 
   progressState?: IProgressState;
   groupsState?: IGroupsState;
+  offsetState?: IOffsetState;
 }
 
 export interface IAnimationState {
@@ -244,4 +248,9 @@ export interface IProgressState {
 export interface IGroupsState {
   setCurrentGroup: (group: number) => void;
   setGroupsLength: (length: number) => void;
+}
+
+export interface IOffsetState {
+  offset: number,
+  setOffset: (offset: number) => void
 }
