@@ -34,9 +34,7 @@ function App() {
         <h1>{groupLength}</h1>
         <h1>{group + 1}</h1>
         <Carousel
-          setProgress={setProgress}
-          setGroup={setGroup}
-          setGroupLength={setGroupLength}
+          progressState={{progress, setProgress}}
           progressBarCustom={true}
         >
           {slides.map(slide => (
