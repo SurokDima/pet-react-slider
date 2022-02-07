@@ -1,4 +1,4 @@
-import React, { useState, Suspense, lazy } from 'react';
+import React, { useState, Suspense, lazy, useCallback } from 'react';
 
 import classes from './styles/App.module.scss';
 import { nanoid } from 'nanoid';
@@ -20,12 +20,15 @@ function App() {
     { id: nanoid(), content: 6 },
   ]);
 
+  const [progress, setProgress] = useState(0);
+
   const loading = <h1>Loading</h1>;
 
   return (
     <div className={classes.app}>
       <Suspense fallback={loading}>
-        <Carousel>
+        <h1>{progress * 100}%</h1>
+        <Carousel setProgress={setProgress} progressBarCustom={false}>
           {slides.map(slide => (
             <div className={classes.slide} key={slide.id}>
               <h2 className={classes.slideContent}>{slide.content}</h2>
