@@ -10,6 +10,8 @@ export default function ControlButton({
   className,
   ...props
 }: IControlButtonsProps) {
+  console.log('Im updated');
+  
   const rightButtonCls = [classes.controlButtons, classes.next].join(' ');
   const leftButtonCls = [classes.controlButtons, classes.prev].join(' ');
 

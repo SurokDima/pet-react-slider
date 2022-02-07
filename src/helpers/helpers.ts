@@ -92,7 +92,7 @@ export function updateSlides(
 
 export function childrenIsChanged(
   newChildren: Slide[],
-  prevChildren: Slide[]
+  prevChildren: Slide[],
 ): boolean {
   if (prevChildren.length !== newChildren.length) return true;
 

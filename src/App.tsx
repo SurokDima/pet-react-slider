@@ -36,11 +36,10 @@ function App() {
         <h1>{group + 1}</h1>
         <h1>Global progress: {offset / 6}</h1>
         <Carousel
-          setProgress={setProgress}
           setGroupsLength={setGroupsLength}
           setOffset={setOffset}
           setCurrentGroup={setGroup}
-          hideDefaultProgress={false}
+          hideDefaultProgress={true}
           hideDefaultDots={true}
         >
           {slides.map(slide => (

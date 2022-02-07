@@ -201,28 +201,32 @@ export function useGroups(
 export default function useProgress(
   anim: boolean,
   time: number,
+  isUsedProgress: boolean,
   setProgress: (progress: number) => void
 ): void {
-  useEffect(() => {
-    setProgress(0);
+  useEffect(() => {    
+    if(isUsedProgress) {
+      setProgress(0);
 
-    if (anim) {
-      let start = 0;
-      let reqId = 0;
-      
-      const step = (timestamp: number) => {
-        start = start === 0 ? timestamp : start;
+      if (anim) {
 
-        const progress = (timestamp - start) / time;
-        setProgress(progress);
+        let start = 0;
+        let reqId = 0;
+        
+        const step = (timestamp: number) => {
+          start = start === 0 ? timestamp : start;
 
-        if (progress <= 1) {
-          reqId = requestAnimationFrame(step);
-        }
-      };
+          const progress = (timestamp - start) / time;
+          setProgress(progress);
 
-      requestAnimationFrame(step);
-      return () => cancelAnimationFrame(reqId);
+          if (progress <= 1) {
+            reqId = requestAnimationFrame(step);
+          }
+        };
+
+        requestAnimationFrame(step);
+        return () => cancelAnimationFrame(reqId);
+      }
     }
-  }, [anim, time, setProgress]);
+  }, [anim, time, setProgress, isUsedProgress]);
 }
