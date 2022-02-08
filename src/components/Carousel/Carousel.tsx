@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import SlidesProvider, {
   ISlidesProviderProps as ISlidesProps,
@@ -13,7 +19,9 @@ import {
 } from '../../types/types';
 import defaultProps from './carouselDefaultProps';
 import useProgress, {
+  IAnimProgress,
   useAnimation,
+  useAnimProgress,
   useAutoplay,
   useCircularOffset,
   useDynamicChildren,
@@ -54,7 +62,7 @@ export default function Carousel(userProps: ICarouselProps) {
   );
 
   // Use offest controlled by CircularOffset class
-  const [circularOffset, setLocalOffset] = useCircularOffset(
+  const [circularOffset, setOffset] = useCircularOffset(
     props.startOffset,
     props.slidesToShow,
     props.slidesToScroll,
@@ -62,46 +70,25 @@ export default function Carousel(userProps: ICarouselProps) {
     props.infinite
   );
 
-  // Get general function for set offset
-  const setExternalOffset = props.setOffset;
-  const setOffset = useCallback(
-    (offset: number): void => {
-      setLocalOffset(offset);
-      if (setExternalOffset) setExternalOffset(offset);
-    },
-    [setExternalOffset, setLocalOffset]
-  );
-  const setMaxOffset = props.setMaxOffset;
-  const maxOffset = props.children.length;
-  useEffect(() => {
-    if(setMaxOffset) setMaxOffset(maxOffset)
-  }, [setMaxOffset, maxOffset])
-
   /**
    * Returns current index of current group
    *
-   * @returns index of current group
+   * @returns id of current group
    */
-  const getCurrentGroup = (): number => {
+  const getCurrentGroup = (): string => {
     for (let i = 0; i < groups.length - 1; i++) {
       if (
         circularOffset.offset >= groups[i].offset &&
         circularOffset.offset < groups[i + 1].offset
       )
-        return i;
+        return groups[i].id;
     }
 
-    return groups.length - 1;
+    return groups[groups.length - 1].id;
   };
 
-  // Reset current group index and groups length for external source
+  // Get current Group
   const currentGroup = getCurrentGroup();
-  const setGroupsLength = props.setGroupsLength;
-  const setCurrentGroup = props.setCurrentGroup;
-  useEffect(() => {
-    if(setCurrentGroup) setCurrentGroup(currentGroup);
-    if(setGroupsLength) setGroupsLength(groups.length);
-  }, [currentGroup, groups.length, props, setCurrentGroup, setGroupsLength]); //TODO FIX groups state
 
   // Use animation
   const [animation, setAnimation] = useAnimation({
@@ -113,7 +100,14 @@ export default function Carousel(userProps: ICarouselProps) {
   const [throttle, setThrottle] = useState<Throttle>(false);
 
   // Use infinity mode
-  useInfinityMode(animation.isSliding, props.infinite, throttle, circularOffset, setOffset, setThrottle);
+  useInfinityMode(
+    animation.isSliding,
+    props.infinite,
+    throttle,
+    circularOffset,
+    setOffset,
+    setThrottle
+  );
 
   // "Memo" function to slide
   const slideTo = useCallback(
@@ -161,22 +155,12 @@ export default function Carousel(userProps: ICarouselProps) {
     setGroups
   );
 
-  // Create progress state and create new "Memo" function for setting progress
-  const [progress, setLocalProgress] = useState(0);
-  const setExternalProgress = props.setProgress;
-  const setProgress = useCallback(
-    (progress: number): void => {
-      setLocalProgress(progress);
-      if (setExternalProgress) setExternalProgress(progress);
-    },
-    [setLocalProgress, setExternalProgress]
-  );
-  useProgress(
-    isPlay && !animation.isSliding,
+  const animProgress = useAnimProgress(
     props.autoplaySpeed * 1000,
-    setExternalProgress !== null || !props.hideDefaultProgress,
-    setProgress
-  ); 
+    props.useProgress,
+    circularOffset.offset,
+    animation.isSliding
+  );
 
   const slidesProps: ISlidesProps = {
     slideWidth,
@@ -184,45 +168,51 @@ export default function Carousel(userProps: ICarouselProps) {
     transform: circularOffset.offset * slideWidth,
   };
 
+  const dots = groups.map<IDot>(el => {
+    return {
+      id: el.id,
+      isCurrent: currentGroup === el.id,
+      onClickHandler: () => slideTo(el.offset),
+    };
+  });
+
   return (
     <div className={classes.carousel} ref={ref}>
       <div className={classes.window}>
         <SlidesProvider {...slidesProps}>{slides}</SlidesProvider>
       </div>
-      {props.hideDefaultProgress ? null : (
-        <ProgressBar
-          classNameContainer={props.progressBarContainerClassName}
-          className={props.progressBarClassName}
-          progress={progress}
-        />
-      )}
-      {props.hideDefaultDots ? null : (
-        <DotsProvider
-          groups={groups}
-          current={currentGroup}
-          onClickHandler={slideTo}
-          classNameProvider={props.dotsProviderClassName}
-          dotsClassName={props.dotsClassName}
-          dotsActiveClassName={props.dotsActiveClassName}
-        />
-      )}
+      {props.progressBar
+        ? props.progressBar(animProgress)
+        : props.useProgress && <ProgressBar animProgress={animProgress} />}
 
-      <ControlButton
-        type={Directions.Left}
-        onClick={slideLeftCallback}
-        className={props.prevButton.className}
-        style={props.prevButton.style}
-      >
-        {props.prevButton.children}
-      </ControlButton>
-      <ControlButton
-        type={Directions.Right}
-        onClick={slideRightCallback}
-        className={props.nextButton.className}
-        style={props.nextButton.style}
-      >
-        {props.nextButton.children}
-      </ControlButton>
+      {props.dotsProvider
+        ? props.dotsProvider(dots, animProgress)
+        : props.useDotsProvider && <DotsProvider dots={dots} />}
+
+      {props.controllButtonLeft ? (
+        props.controllButtonLeft(slideLeftCallback)
+      ) : (
+        <ControlButton
+          type={Directions.Left}
+          onClick={slideLeftCallback}
+          className={props.prevButton.className}
+          style={props.prevButton.style}
+        >
+          {props.prevButton.children}
+        </ControlButton>
+      )}
+      {props.controllButtonRight ? (
+        props.controllButtonRight(slideRightCallback)
+      ) : (
+        <ControlButton
+          type={Directions.Right}
+          onClick={slideRightCallback}
+          className={props.nextButton.className}
+          style={props.nextButton.style}
+        >
+          {props.nextButton.children}
+        </ControlButton>
+      )}
     </div>
   );
 }
@@ -233,7 +223,7 @@ function useInfinityMode(
   throttle: Throttle,
   circularOffset: CircularOffset,
   setOffset: (offset: number) => void,
-  setThrottle: (throttle: Throttle) => void,
+  setThrottle: (throttle: Throttle) => void
 ) {
   useEffect(() => {
     if (!isSliding && infinite === 'infinite') {
@@ -271,25 +261,23 @@ export interface ICarouselProps {
 
   startOffset?: number;
 
-  dotsClassName?: string | null;
-  dotsActiveClassName?: string | null;
-  dotsProviderClassName?: string | null;
-  hideDefaultDots?: boolean;
+  useProgress?: boolean;
+  useDotsProvider?: boolean;
 
-  progressBarContainerClassName?: string | null;
-  progressBarClassName?: string | null;
-  hideDefaultProgress?: boolean;
+  dotsProvider?: ((dots: IDot[], animProgress?: IAnimProgress) => ReactNode) | null;
+  progressBar?: ((animProgress: IAnimProgress) => ReactNode) | null;
 
-  offsetCustom?: boolean;
-
-  setProgress?: ((progress: number) => void) | null;
-  setCurrentGroup?: ((group: number) => void) | null;
-  setGroupsLength?: ((length: number) => void) | null;
-  setOffset?: ((offset: number) => void) | null;
-  setMaxOffset?: ((offset: number) => void) | null;
+  controllButtonLeft?: ((onClickHandler: () => void) => ReactNode) | null;
+  controllButtonRight?: ((onClickHandler: () => void) => ReactNode) | null;
 }
 
 export interface IAnimationState {
   transition: number;
   isSliding: boolean;
+}
+
+export interface IDot {
+  id: string;
+  isCurrent: boolean;
+  onClickHandler: () => void;
 }

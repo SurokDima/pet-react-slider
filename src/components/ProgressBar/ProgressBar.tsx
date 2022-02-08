@@ -1,16 +1,15 @@
+import { IAnimProgress } from '../../helpers/hooks';
 import classes from '../../styles/ProgressBar.module.scss';
 
 //TODO Progress state may be in Carousel
 export default function ProgressBar({
-  progress,
-  classNameContainer,
-  className,
+  animProgress,
 }: IProgressBarProps) {
   return (
-    <div className={classNameContainer ?? classes.progressBarContainer}>
+    <div className={classes.progressBarContainer}>
       <div
-        className={className ?? classes.progressBar}
-        style={{ width: `${progress * 100}%` }}
+        className={classes.progressBar}
+        style={{ width: `${animProgress.progress * 100}%`, transition: animProgress.transition }}
       ></div>
     </div>
   );
@@ -18,7 +17,6 @@ export default function ProgressBar({
 
 
 interface IProgressBarProps {
-  progress: number;
-  classNameContainer?: string | null;
-  className?: string | null;
+
+  animProgress: IAnimProgress
 }

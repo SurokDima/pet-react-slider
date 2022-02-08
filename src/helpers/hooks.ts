@@ -39,7 +39,7 @@ export function useAutoplay(
   autoplay: boolean,
   autoplaySpeed: number,
   currentOffset: number,
-  isSliding: boolean,
+  isSliding: boolean, //TODO Get rid of isSliding
   slide: () => void
 ): [boolean, (isPlay: boolean) => void] {
   const [isPlay, setIsPlay] = useState<boolean>(autoplay);
@@ -198,6 +198,7 @@ export function useGroups(
   return [groupsState, setGroups];
 }
 
+//TODO FIX Progress
 export default function useProgress(
   anim: boolean,
   time: number,
@@ -207,7 +208,7 @@ export default function useProgress(
   useEffect(() => {    
     if(isUsedProgress) {
       setProgress(0);
-      console.log(isUsedProgress)
+
       if (anim) {
 
         let start = 0;
@@ -229,4 +230,38 @@ export default function useProgress(
       }
     }
   }, [anim, time, setProgress, isUsedProgress]);
+}
+
+export interface IAnimProgress {
+  transition: string,
+  progress: number,
+}
+
+export function useAnimProgress(time: number, anim: boolean, currentOffset: number, isSliding: boolean) {
+  const [animProgress, setAnimProgress] = useState<IAnimProgress>({
+    transition: '',
+    progress: 0,
+  });
+  useEffect(() => {
+    if(anim) {
+      if(isSliding) {
+        setAnimProgress({
+          transition: '',
+          progress: 0,
+        })
+      } else {
+        setAnimProgress({
+          transition: `width ${time}ms linear`,
+          progress: 1,
+        })
+        const timer = setTimeout(() => setAnimProgress({
+          transition: '',
+          progress: 0,
+        }), time);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [time, anim, currentOffset, isSliding])
+
+  return animProgress;
 }

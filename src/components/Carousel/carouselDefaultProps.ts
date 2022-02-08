@@ -12,23 +12,13 @@ const carouselDefaultProps: Required<ICarouselProps> = {
   animationDuration: 0.5,
   infinite: 'infinite',
 
-  dotsActiveClassName: null,
-  dotsClassName: null,
-  dotsProviderClassName: null,
+  useProgress: false,
+  useDotsProvider: false,
 
-  progressBarClassName: null,
-  progressBarContainerClassName: null,
-
-  hideDefaultProgress: true,
-  hideDefaultDots: true,
-
-  offsetCustom: false,
-
-  setCurrentGroup: null,
-  setGroupsLength: null,
-  setProgress: null,
-  setOffset: null,
-  setMaxOffset: null,
+  dotsProvider: null,
+  progressBar: null,
+  controllButtonLeft: null,
+  controllButtonRight: null,
 };
 
 export default carouselDefaultProps;
