@@ -22,5 +22,5 @@ export default function DotsProvider({
 }
 
 interface IDotsProps {
-  dots: IDot[]
+  dots: readonly IDot[]
 }

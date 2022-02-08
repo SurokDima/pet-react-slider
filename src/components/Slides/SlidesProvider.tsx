@@ -30,5 +30,5 @@ export interface ISlidesProviderProps {
   transition: number;
   slideWidth: number;
 
-  children?: ISlideObj[];
+  children?: readonly ISlideObj[];
 }

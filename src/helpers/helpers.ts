@@ -2,14 +2,15 @@ import { Directions, Infinite, Slide, ISlideObj, IGroup } from '../types/types';
 import { nanoid } from 'nanoid';
 
 /**
- * Returns new Slide[] with cloned edge elements
+ * Returns new array of sldies with cloned edge elements
  *
- * @param children - input array
- * @param slidesToShow- number of slides to show
- * @param infinite - is carouse infinite
+ * @param children input array
+ * @param slidesToShow number of slides to show
+ * @param infinite scrolling mode
+ * @returns new array of slides
  */
 export function initSlides(
-  children: Slide[],
+  children: readonly Slide[],
   slidesToShow: number,
   infinite: Infinite
 ): Slide[] {
@@ -22,23 +23,32 @@ export function initSlides(
     return [...lastElems, ...children, ...firstElems];
   }
 
-  return children;
+  return [...children];
 }
 
 /**
  * Sets unique id to each slide
  *
- * @param slides
+ * @param slides array of slides
+ * @returns array of slides objects
  */
-export function attachIdToSlides(slides: Slide[]): ISlideObj[] {
+export function attachIdToSlides(slides: readonly Slide[]): ISlideObj[] {
   return slides.map(slide => ({
     id: nanoid(),
     slide,
   }));
 }
 
+/**
+ * Returns new array of slide objects
+ * 
+ * @param children input array
+ * @param slidesToShow number of slides to show at the same time
+ * @param infinite scrolling mode
+ * @returns new arrat of slide objects
+ */
 export function initSlideObjects(
-  children: Slide[],
+  children: readonly Slide[],
   slidesToShow: number,
   infinite: Infinite
 ) {
@@ -48,51 +58,34 @@ export function initSlideObjects(
 /**
  * Inverse direction
  *
- * @param direction - input direction
+ * @param direction input direction
+ * @returns opposite direction
  */
 export function inverseDirection(direction: Directions): Directions {
   return direction === Directions.Right ? Directions.Left : Directions.Right;
 }
 
-/**
- * Extract slides from slides objects
- *
- * @param slidesObjs
- */
-export function extractSlides(slidesObjs: ISlideObj[]): Slide[] {
-  return slidesObjs.map(slideObj => slideObj.slide);
-}
 
-export function areItemsNotMatched<T>(items: (T | undefined)[]): boolean {
+/**
+ * Returns true if array contains undefined and false otherwise
+ * 
+ * @param items input array of items that may contain undefined
+ * @returns true if array contains undefined and false otherwise
+ */
+export function isContainsUndefined<T>(items: readonly T[]): boolean {
   return items.some(item => item === undefined);
 }
 
-export function updateSlides(
-  currentSlidesObjs: ISlideObj[],
-  newChildren: Slide[],
-  prevChildren: Slide[],
-  slidesToShow: number,
-  infinite: Infinite
-): ISlideObj[] | false {
-  if (prevChildren.length !== newChildren.length) {
-    console.log(prevChildren, newChildren);
-    return initSlideObjects(newChildren, slidesToShow, infinite);
-  }
-
-  const matchedSlides = prevChildren.map(prevChild => {
-    return newChildren.find(newChild => newChild.key === prevChild.key);
-  });
-
-  if (areItemsNotMatched(matchedSlides)) {
-    return initSlideObjects(newChildren, slidesToShow, infinite);
-  }
-
-  return currentSlidesObjs;
-}
-
+/**
+ * Returns true if children have changed and false otherwise
+ * 
+ * @param newChildren new children
+ * @param prevChildren previous children
+ * @returns true if children have changed and false otherwise
+ */
 export function childrenIsChanged(
-  newChildren: Slide[],
-  prevChildren: Slide[],
+  newChildren: readonly Slide[],
+  prevChildren: readonly Slide[],
 ): boolean {
   if (prevChildren.length !== newChildren.length) return true;
 
@@ -100,20 +93,7 @@ export function childrenIsChanged(
     return newChildren.find(newChild => newChild.key === prevChild.key);
   });
 
-  return areItemsNotMatched<Slide>(matchedSlides);
-}
-
-export function extractOriginalSlides(
-  slides: ISlideObj[],
-  slidesToShow: number,
-  infinite: Infinite
-): ISlideObj[] {
-  if (infinite !== 'infinite') {
-    return slides;
-  }
-
-  const roundedSlidesToShow = Math.ceil(slidesToShow);
-  return slides.slice(roundedSlidesToShow, -slidesToShow);
+  return isContainsUndefined<Slide | undefined>(matchedSlides);
 }
 
 export function limitOffset(
@@ -132,6 +112,16 @@ export function limitOffset(
   return offset;
 }
 
+/**
+ * Returns new array of groups
+ * 
+ * @param length children length
+ * @param startOffset default offset
+ * @param slidesToShow number of slides to show at the same time
+ * @param slidesToScroll scroll length
+ * @param infinite scrolling mode
+ * @returns new array of groups
+ */
 export function initGroups(
   length: number,
   startOffset: number,

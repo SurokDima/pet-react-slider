@@ -28,5 +28,5 @@ interface IControlButtonsProps extends HTMLAttributes<HTMLDivElement> {
   type: Directions;
   onClick: () => void;
 
-  children?: ReactNode;
+  children?: Readonly<ReactNode>;
 }

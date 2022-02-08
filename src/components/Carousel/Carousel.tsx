@@ -1,7 +1,6 @@
-import React, {
+import {
   ReactNode,
   useCallback,
-  useEffect,
   useMemo,
   useState,
 } from 'react';
@@ -9,8 +8,8 @@ import React, {
 import SlidesProvider, {
   ISlidesProviderProps as ISlidesProps,
 } from '../Slides/SlidesProvider';
-import { initSlideObjects, inverseDirection } from '../../helpers/helpers';
-import { IControlButton, Directions, Infinite, Slide, Throttle } from '../../types/types';
+import { initSlideObjects } from '../../helpers/helpers';
+import { Directions, Infinite, ISlideObj, Slide } from '../../types/types';
 import defaultProps from './carouselDefaultProps';
 import {
   IAnimProgress,
@@ -20,15 +19,15 @@ import {
   useCircularOffset,
   useDynamicChildren,
   useGroups,
+  useInfinityMode,
   useWidth,
 } from '../../helpers/hooks';
 import ControlButton from '../ControlButton/ControlButton';
 import DotsProvider from '../DotsProvider/DotsProvider';
+import ProgressBar from '../ProgressBar/ProgressBar';
+import PauseButton from '../PauseButton/PauseButton';
 
 import classes from '../../styles/Carousel.module.scss';
-import ProgressBar from '../ProgressBar/ProgressBar';
-import { CircularOffset } from '../../helpers/CircularOffset';
-import PauseButton from '../PauseButton/PauseButton';
 
 export default function Carousel(userProps: ICarouselProps) {
   // Merge props
@@ -41,7 +40,7 @@ export default function Carousel(userProps: ICarouselProps) {
   const [width, ref] = useWidth<HTMLDivElement>(0);
 
   // Use slides and calc their length and count
-  const [slides, setSlides] = useState(
+  const [slides, setSlides] = useState<readonly ISlideObj[]>(
     initSlideObjects(props.children, props.slidesToShow, props.infinite)
   );
   const slideWidth = width / props.slidesToShow;
@@ -109,15 +108,17 @@ export default function Carousel(userProps: ICarouselProps) {
   );
   // Get current Group
   const currentGroup = getCurrentGroup(circularOffset.offset);
-
+    console.log(groups, currentGroup);
+    
   // Create dots objects from groups
-  const dots = groups.map<IDot>(el => {
+  const dots = groups.map<Readonly<IDot>>(el => {
     return {
       id: el.id,
       isCurrent: currentGroup === el.id,
       onClickHandler: () => slideTo(el.offset),
     };
   });
+  
 
   // Use autoplay function
   const [isPlay, setIsPlay] = useAutoplay(
@@ -188,53 +189,8 @@ export default function Carousel(userProps: ICarouselProps) {
   );
 }
 
-/**
- * Add "infinity" mode to slider.
- * Silently resets the slider offset its initial position for infinite scrolling
- *
- * @param isSliding indicates whether the carousel is currently moving
- * @param infinite `infinite` prop of carousel
- * @param circularOffset CircularOffset object that controls the offset
- * @param setOffset function that sets new offset
- * @return function to change throttle
- */
-function useInfinityMode(
-  isSliding: boolean,
-  infinite: Infinite,
-  circularOffset: CircularOffset,
-  setOffset: (offset: number) => void
-): (throttle: Throttle) => void {
-  /**
-   * Limits automatic transition between cycles.
-   * If equals 0 then the automatic transition to the left is disabled.
-   * If equals 1 then the automatic transition to the right is disabled.
-   * If false then the the automatic transition is available in both directions
-   */
-  const [throttle, setThrottle] = useState<Throttle>(Directions.Left);
-
-  useEffect(() => {
-    if (!isSliding && infinite === 'infinite') {
-      const isShouldReset = circularOffset.isShouldReset();
-      if (isShouldReset !== false && isShouldReset !== throttle) {
-        setOffset(circularOffset.toNextLoopCycle(isShouldReset));
-        setThrottle(inverseDirection(isShouldReset));
-      }
-    }
-  }, [
-    circularOffset,
-    circularOffset.offset,
-    infinite,
-    isSliding,
-    setOffset,
-    setThrottle,
-    throttle,
-  ]);
-
-  return setThrottle;
-}
-
 export interface ICarouselProps {
-  children: Slide[];
+  children: readonly Slide[];
 
   infinite?: Infinite;
   slidesToShow?: number;
@@ -252,9 +208,9 @@ export interface ICarouselProps {
   usePauseButton?: boolean;
 
   dotsProvider?:
-    | ((dots: IDot[], animProgress?: IAnimProgress) => ReactNode)
+    | ((dots: readonly IDot[], animProgress?: Readonly<IAnimProgress>) => ReactNode)
     | null;
-  progressBar?: ((animProgress: IAnimProgress) => ReactNode) | null;
+  progressBar?: ((animProgress: Readonly<IAnimProgress>) => ReactNode) | null;
   pauseButton?:
     | ((isPlay: boolean, setIsPlay: (arg: boolean) => void) => ReactNode)
     | null;

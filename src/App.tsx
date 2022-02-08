@@ -31,7 +31,7 @@ function App() {
     <div className={classes.app}>
       <Suspense fallback={loading}>
         <Carousel
-          dotsProvider={(dots: IDot[]) => <DotsProvider dots={dots} />}
+          dotsProvider={(dots: readonly IDot[]) => <DotsProvider dots={dots} />}
           progressBar={(animProgress: IAnimProgress) => (
             <ProgressBar animProgress={animProgress} />
           )}

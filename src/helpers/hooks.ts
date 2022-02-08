@@ -1,7 +1,25 @@
-import { RefObject, useCallback, useEffect, useRef, useState } from 'react';
+import {
+  RefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { CircularOffset } from './CircularOffset';
-import { IGroup, Infinite, Slide, ISlideObj } from '../types/types';
-import { childrenIsChanged, initGroups, initSlideObjects } from './helpers';
+import {
+  IGroup,
+  Infinite,
+  Slide,
+  ISlideObj,
+  Throttle,
+  Directions,
+} from '../types/types';
+import {
+  childrenIsChanged,
+  initGroups,
+  initSlideObjects,
+  inverseDirection,
+} from './helpers';
 import { IAnimationState } from '../components/Carousel/Carousel';
 
 /**
@@ -30,7 +48,7 @@ export function useWidth<T extends HTMLElement>(
 
 /**
  * Crates new state to autoplay offset
- * 
+ *
  * @param autoplay default value for `isPlay` state
  * @param autoplaySpeed time for one slide(group of slides) in seconds
  * @param currentOffset current offset
@@ -57,10 +75,10 @@ export function useAutoplay(
 
 /**
  * Creates new offset state and returns it.
- * 
+ *
  * @param startOffset default offset
  * @param slidesToShow number of slides to show at the same time
- * @param infinite scrolling mode 
+ * @param infinite scrolling mode
  * @returns offset state
  */
 export function useOffset(
@@ -76,11 +94,11 @@ export function useOffset(
 /**
  * Creates offset state hook and returns new CircularOffset object
  *
- * @param startOffset default offset 
+ * @param startOffset default offset
  * @param slidesToShow number of slides to show at the same time
  * @param slidesToScroll length of scroll
  * @param trackLength number of slides
- * @param infinite scrolling mode 
+ * @param infinite scrolling mode
  */
 export function useCircularOffset(
   startOffset: number,
@@ -88,9 +106,9 @@ export function useCircularOffset(
   slidesToScroll: number,
   trackLength: number,
   infinite: Infinite
-): [CircularOffset, (offset: number) => void] {
+): [Readonly<CircularOffset>, (offset: number) => void] {
   const [offset, setOffset] = useOffset(startOffset, slidesToShow, infinite);
-  const [circular] = useState<CircularOffset>(
+  const [circular] = useState<Readonly<CircularOffset>>(
     new CircularOffset(
       offset,
       trackLength,
@@ -106,14 +124,14 @@ export function useCircularOffset(
 
 /**
  * Creates animation state and returns it
- * 
+ *
  * @param startState default state
  * @returns animation state and function to set animation state
  */
 export function useAnimation(
-  startState: IAnimationState
+  startState: Readonly<IAnimationState>
 ): [IAnimationState, (animState: IAnimationState) => void] {
-  const [animation, setAnimation] = useState<IAnimationState>(startState);
+  const [animation, setAnimation] = useState<Readonly<IAnimationState>>(startState);
 
   useEffect(() => {
     if (animation.isSliding) {
@@ -133,16 +151,19 @@ export function useAnimation(
 
 /**
  * Executes callback if `isChanged` function returns true
- * 
+ *
  * @param prevValue previous value
  * @param newValue new value
  * @param isChanged callback that accepts previous and new value and returns true if the values are not equal
  * @param callback callback to execute
  */
 export function useCustomValueChangeLogic<T>(
-  prevValue: T,
-  newValue: T,
-  isChanged: (prevChildren: T, newChildren: T) => boolean,
+  prevValue: Readonly<T>,
+  newValue: Readonly<T>,
+  isChanged: (
+    prevChildren: Readonly<T>,
+    newChildren: Readonly<T>
+  ) => boolean,
   callback: () => void
 ): void {
   useEffect(() => {
@@ -154,17 +175,17 @@ export function useCustomValueChangeLogic<T>(
 
 /**
  * Monitors children changes and recreates slides and groups if children have changed.
- * 
+ *
  * @param children carousel `children`
  * @param startOffset number of slides to show at the same time
  * @param slidesToShow number of slides to show at the same time
  * @param slidesToScroll length of scroll
- * @param infinite scrolling mode 
+ * @param infinite scrolling mode
  * @param setSlides function to set slides
  * @param setGroups function to set groups
  */
 export function useDynamicChildren(
-  children: Slide[],
+  children: readonly Slide[],
   startOffset: number,
   slidesToShow: number,
   slidesToScroll: number,
@@ -172,7 +193,7 @@ export function useDynamicChildren(
   setSlides: (slides: ISlideObj[]) => void,
   setGroups: (groups: IGroup[]) => void
 ) {
-  const [prevChildren] = useState<Slide[]>(children);
+  const [prevChildren] = useState<Slide[]>([...children]);
 
   const setSlidesAndGroupsCallback = useCallback<() => void>(() => {
     setSlides(initSlideObjects(children, slidesToShow, infinite));
@@ -210,7 +231,7 @@ export function useDynamicChildren(
  * @param startOffset number of slides to show at the same time
  * @param slidesToScroll length of scroll
  * @param slidesToShow number of slides to show at the same time
- * @param infinite scrolling mode 
+ * @param infinite scrolling mode
  * @returns array of groups, function to set new current group index and function to get current group id
  */
 export function useGroups(
@@ -219,7 +240,7 @@ export function useGroups(
   slidesToScroll: number,
   slidesToShow: number,
   infinite: Infinite
-): [IGroup[], (groups: IGroup[]) => void, (offset: number) => string] {
+): [readonly IGroup[], (groups: IGroup[]) => void, (offset: number) => string] {
   const groups = initGroups(
     length,
     startOffset,
@@ -228,6 +249,8 @@ export function useGroups(
     infinite
   );
 
+  const [groupsState, setGroups] = useState<readonly IGroup[]>(groups);
+
   /**
    * Returns id of current group
    *
@@ -235,15 +258,14 @@ export function useGroups(
    * @returns id of current group
    */
   const getCurrentGroup = (offset: number): string => {
-    for (let i = 0; i < groups.length - 1; i++) {
-      if (offset >= groups[i].offset && offset < groups[i + 1].offset)
-        return groups[i].id;
+    for (let i = 0; i < groupsState.length - 1; i++) {
+      if (offset >= groupsState[i].offset && offset < groups[i + 1].offset)
+        return groupsState[i].id;
     }
 
-    return groups[groups.length - 1].id;
+    return groupsState[groupsState.length - 1].id;
   };
 
-  const [groupsState, setGroups] = useState<IGroup[]>(groups);
   return [groupsState, setGroups, getCurrentGroup];
 }
 
@@ -270,7 +292,7 @@ export function useAnimProgress(
   isSliding: boolean,
   animationDuration: number
 ) {
-  const [animProgress, setAnimProgress] = useState<IAnimProgress>({
+  const [animProgress, setAnimProgress] = useState<Readonly<IAnimProgress>>({
     transition: 0,
     state: 'decreasing',
     progress: 0,
@@ -303,4 +325,49 @@ export function useAnimProgress(
   }, [time, anim, currentOffset, isSliding, animationDuration]);
 
   return animProgress;
+}
+
+/**
+ * Add "infinity" mode to slider.
+ * Silently resets the slider offset its initial position for infinite scrolling
+ *
+ * @param isSliding indicates whether the carousel is currently moving
+ * @param infinite `infinite` prop of carousel
+ * @param circularOffset CircularOffset object that controls the offset
+ * @param setOffset function that sets new offset
+ * @return function to change throttle
+ */
+export function useInfinityMode(
+  isSliding: boolean,
+  infinite: Infinite,
+  circularOffset: Readonly<CircularOffset>,
+  setOffset: (offset: number) => void
+): (throttle: Throttle) => void {
+  /**
+   * Limits automatic transition between cycles.
+   * If equals 0 then the automatic transition to the left is disabled.
+   * If equals 1 then the automatic transition to the right is disabled.
+   * If false then the the automatic transition is available in both directions
+   */
+  const [throttle, setThrottle] = useState<Throttle>(Directions.Left);
+
+  useEffect(() => {
+    if (!isSliding && infinite === 'infinite') {
+      const isShouldReset = circularOffset.isShouldReset();
+      if (isShouldReset !== false && isShouldReset !== throttle) {
+        setOffset(circularOffset.toNextLoopCycle(isShouldReset));
+        setThrottle(inverseDirection(isShouldReset));
+      }
+    }
+  }, [
+    circularOffset,
+    circularOffset.offset,
+    infinite,
+    isSliding,
+    setOffset,
+    setThrottle,
+    throttle,
+  ]);
+
+  return setThrottle;
 }
