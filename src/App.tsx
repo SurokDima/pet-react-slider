@@ -1,7 +1,11 @@
-import React, { useState, Suspense, lazy } from 'react';
+import { useState, Suspense, lazy } from 'react';
+import { nanoid } from 'nanoid';
+
+import { IDot } from './components/Carousel/Carousel';
+import DotsProvider from './components/DotsProvider/DotsProvider';
 
 import classes from './styles/App.module.scss';
-import { nanoid } from 'nanoid';
+import { IAnimProgress } from './helpers/hooks';
 import ProgressBar from './components/ProgressBar/ProgressBar';
 
 const Carousel = lazy(() => import('./components/Carousel/Carousel'));
@@ -21,26 +25,17 @@ function App() {
     { id: nanoid(), content: 6 },
   ]);
 
-  const [progress, setProgress] = useState(0);
-  const [groupLength, setGroupsLength] = useState(0);
-  const [group, setGroup] = useState(0);
-  const [offset, setOffset] = useState(0);
-  const [maxOffset, setMaxOffset] = useState(0);
-
   const loading = <h1>Loading</h1>;
 
   return (
     <div className={classes.app}>
       <Suspense fallback={loading}>
-        <h1>Local progress: {progress * 100}%</h1>
-        <h1>{groupLength}</h1>
-        <h1>{group + 1}</h1>
-        <h1>Global progress: {(offset)/ maxOffset}</h1>
         <Carousel
-          setGroupsLength={setGroupsLength}
-          setOffset={setOffset}
-          setCurrentGroup={setGroup}
-          setMaxOffset={setMaxOffset}
+          dotsProvider={(dots: IDot[]) => <DotsProvider dots={dots} />}
+          progressBar={(animProgress: IAnimProgress) => (
+            <ProgressBar animProgress={animProgress} />
+          )}
+          useProgress={true}
         >
           {slides.map(slide => (
             <div className={classes.slide} key={slide.id}>
@@ -75,7 +70,6 @@ function App() {
         >
           New Slide At End
         </button>
-        <ProgressBar progress={progress} />
       </Suspense>
     </div>
   );
