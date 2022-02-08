@@ -34,6 +34,7 @@ import DotsProvider from '../DotsProvider/DotsProvider';
 import classes from '../../styles/Carousel.module.scss';
 import ProgressBar from '../ProgressBar/ProgressBar';
 import { CircularOffset } from '../../helpers/CircularOffset';
+import PauseButton from '../PauseButton/PauseButton';
 
 export default function Carousel(userProps: ICarouselProps) {
   // Merge props
@@ -136,7 +137,7 @@ export default function Carousel(userProps: ICarouselProps) {
   const slideLeftCallback = useCallback(() => slide(Directions.Left), [slide]);
 
   // Use autoplay function
-  const [isPlay] = useAutoplay(
+  const [isPlay, setIsPlay] = useAutoplay(
     props.autoplay,
     props.autoplaySpeed,
     circularOffset.offset,
@@ -144,7 +145,7 @@ export default function Carousel(userProps: ICarouselProps) {
     slideRightCallback
   );
 
-  // Watch for children chagnes
+  // Watch for children changes
   useDynamicChildren(
     props.children,
     props.startOffset,
@@ -157,9 +158,10 @@ export default function Carousel(userProps: ICarouselProps) {
 
   const animProgress = useAnimProgress(
     props.autoplaySpeed * 1000,
-    props.useProgress,
+    props.useProgress && isPlay,
     circularOffset.offset,
-    animation.isSliding
+    animation.isSliding,
+    props.animationDuration
   );
 
   const slidesProps: ISlidesProps = {
@@ -213,6 +215,11 @@ export default function Carousel(userProps: ICarouselProps) {
           {props.nextButton.children}
         </ControlButton>
       )}
+      {props.pauseButton
+        ? props.pauseButton(isPlay, setIsPlay)
+        : props.usePauseButton && (
+            <PauseButton isPlay={isPlay} setIsPlay={setIsPlay} />
+          )}
     </div>
   );
 }
@@ -263,9 +270,15 @@ export interface ICarouselProps {
 
   useProgress?: boolean;
   useDotsProvider?: boolean;
+  usePauseButton?: boolean;
 
-  dotsProvider?: ((dots: IDot[], animProgress?: IAnimProgress) => ReactNode) | null;
+  dotsProvider?:
+    | ((dots: IDot[], animProgress?: IAnimProgress) => ReactNode)
+    | null;
   progressBar?: ((animProgress: IAnimProgress) => ReactNode) | null;
+  pauseButton?:
+    | ((isPlay: boolean, setIsPlay: (arg: boolean) => void) => ReactNode)
+    | null;
 
   controllButtonLeft?: ((onClickHandler: () => void) => ReactNode) | null;
   controllButtonRight?: ((onClickHandler: () => void) => ReactNode) | null;

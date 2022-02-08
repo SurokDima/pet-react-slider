@@ -14,9 +14,11 @@ const carouselDefaultProps: Required<ICarouselProps> = {
 
   useProgress: false,
   useDotsProvider: false,
+  usePauseButton: true,
 
   dotsProvider: null,
   progressBar: null,
+  pauseButton: null,
   controllButtonLeft: null,
   controllButtonRight: null,
 };

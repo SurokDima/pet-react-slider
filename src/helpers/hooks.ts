@@ -205,15 +205,14 @@ export default function useProgress(
   isUsedProgress: boolean,
   setProgress: (progress: number) => void
 ): void {
-  useEffect(() => {    
-    if(isUsedProgress) {
+  useEffect(() => {
+    if (isUsedProgress) {
       setProgress(0);
 
       if (anim) {
-
         let start = 0;
         let reqId = 0;
-        
+
         const step = (timestamp: number) => {
           start = start === 0 ? timestamp : start;
 
@@ -233,35 +232,43 @@ export default function useProgress(
 }
 
 export interface IAnimProgress {
-  transition: string,
-  progress: number,
+  transition: string;
+  progress: number;
 }
 
-export function useAnimProgress(time: number, anim: boolean, currentOffset: number, isSliding: boolean) {
+export function useAnimProgress(
+  time: number,
+  anim: boolean,
+  currentOffset: number,
+  isSliding: boolean,
+  animationDuration: number,
+) {
   const [animProgress, setAnimProgress] = useState<IAnimProgress>({
     transition: '',
     progress: 0,
   });
   useEffect(() => {
-    if(anim) {
-      if(isSliding) {
-        setAnimProgress({
-          transition: '',
-          progress: 0,
-        })
-      } else {
-        setAnimProgress({
-          transition: `width ${time}ms linear`,
-          progress: 1,
-        })
-        const timer = setTimeout(() => setAnimProgress({
-          transition: '',
-          progress: 0,
-        }), time);
-        return () => clearTimeout(timer);
-      }
+    setAnimProgress({
+      transition: `width ${animationDuration}s`,
+      progress: 0,
+    });
+
+    if (anim && !isSliding) {
+      setAnimProgress({
+        transition: `width ${time}ms linear`,
+        progress: 1,
+      });
+      const timer = setTimeout(
+        () =>
+          setAnimProgress({
+            transition: '',
+            progress: 0,
+          }),
+        time
+      );
+      return () => clearTimeout(timer);
     }
-  }, [time, anim, currentOffset, isSliding])
+  }, [time, anim, currentOffset, isSliding]);
 
   return animProgress;
 }
