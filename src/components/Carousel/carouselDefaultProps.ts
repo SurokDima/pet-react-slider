@@ -2,15 +2,13 @@ import { ICarouselProps } from './Carousel';
 
 const carouselDefaultProps: Required<ICarouselProps> = {
   children: [],
-  nextButton: { children: null },
-  prevButton: { children: null },
-  slidesToShow: 1,
-  slidesToScroll: 1, //TODO Limit this numbers
+  slidesToShow: 2,
+  slidesToScroll: 1, 
   autoplay: true,
   autoplaySpeed: 3,
   startOffset: 0,
   animationDuration: 0.5,
-  infinite: 'infinite',
+  infinite: 'none',
 
   useProgress: false,
   useDotsProvider: false,

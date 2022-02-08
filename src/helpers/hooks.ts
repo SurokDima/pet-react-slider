@@ -9,6 +9,7 @@ import { IAnimationState } from '../components/Carousel/Carousel';
  * Return state width and ref
  *
  * @param defaultWidth Default width
+ * @return width sate and react ref
  */
 export function useWidth<T extends HTMLElement>(
   defaultWidth: number
@@ -28,32 +29,40 @@ export function useWidth<T extends HTMLElement>(
 }
 
 /**
- * Sets autoplay index
- *
- * @param autoplay - default value
- * @param autoplaySpeed - time between slides (in sec)
- * @param currentOffset - current index
- * @param slide - function to move to next slide
+ * Crates new state to autoplay offset
+ * 
+ * @param autoplay default value for `isPlay` state
+ * @param autoplaySpeed time for one slide(group of slides) in seconds
+ * @param currentOffset current offset
+ * @param slide right move function
+ * @returns isPlay sate and function to change this state
  */
 export function useAutoplay(
   autoplay: boolean,
   autoplaySpeed: number,
   currentOffset: number,
-  isSliding: boolean, //TODO Get rid of isSliding
   slide: () => void
 ): [boolean, (isPlay: boolean) => void] {
   const [isPlay, setIsPlay] = useState<boolean>(autoplay);
 
   useEffect(() => {
-    if (isPlay && !isSliding) {
+    if (isPlay) {
       const timer = setTimeout(() => slide(), autoplaySpeed * 1000);
       return () => clearTimeout(timer);
     }
-  }, [isPlay, slide, currentOffset, autoplaySpeed, isSliding]);
+  }, [isPlay, slide, currentOffset, autoplaySpeed]);
 
   return [isPlay, setIsPlay];
 }
 
+/**
+ * Creates new offset state and returns it.
+ * 
+ * @param startOffset default offset
+ * @param slidesToShow number of slides to show at the same time
+ * @param infinite scrolling mode 
+ * @returns offset state
+ */
 export function useOffset(
   startOffset: number,
   slidesToShow: number,
@@ -65,13 +74,13 @@ export function useOffset(
 }
 
 /**
- * Creates index state hook and return new Circular
+ * Creates offset state hook and returns new CircularOffset object
  *
- * @param startOffset
- * @param slidesToShow
- * @param slidesToScroll
- * @param trackLength
- * @param infinite
+ * @param startOffset default offset 
+ * @param slidesToShow number of slides to show at the same time
+ * @param slidesToScroll length of scroll
+ * @param trackLength number of slides
+ * @param infinite scrolling mode 
  */
 export function useCircularOffset(
   startOffset: number,
@@ -95,6 +104,12 @@ export function useCircularOffset(
   return [circular, setOffset];
 }
 
+/**
+ * Creates animation state and returns it
+ * 
+ * @param startState default state
+ * @returns animation state and function to set animation state
+ */
 export function useAnimation(
   startState: IAnimationState
 ): [IAnimationState, (animState: IAnimationState) => void] {
@@ -117,12 +132,12 @@ export function useAnimation(
 }
 
 /**
- * Executes callback if function isChanged return true
- *
- * @param prevValue
- * @param newValue
- * @param isChanged
- * @param callback
+ * Executes callback if `isChanged` function returns true
+ * 
+ * @param prevValue previous value
+ * @param newValue new value
+ * @param isChanged callback that accepts previous and new value and returns true if the values are not equal
+ * @param callback callback to execute
  */
 export function useCustomValueChangeLogic<T>(
   prevValue: T,
@@ -137,6 +152,17 @@ export function useCustomValueChangeLogic<T>(
   }, [callback, isChanged, newValue, prevValue]);
 }
 
+/**
+ * Monitors children changes and recreates slides and groups if children have changed.
+ * 
+ * @param children carousel `children`
+ * @param startOffset number of slides to show at the same time
+ * @param slidesToShow number of slides to show at the same time
+ * @param slidesToScroll length of scroll
+ * @param infinite scrolling mode 
+ * @param setSlides function to set slides
+ * @param setGroups function to set groups
+ */
 export function useDynamicChildren(
   children: Slide[],
   startOffset: number,
@@ -145,7 +171,7 @@ export function useDynamicChildren(
   infinite: Infinite,
   setSlides: (slides: ISlideObj[]) => void,
   setGroups: (groups: IGroup[]) => void
-): Slide[] {
+) {
   const [prevChildren] = useState<Slide[]>(children);
 
   const setSlidesAndGroupsCallback = useCallback<() => void>(() => {
@@ -175,17 +201,25 @@ export function useDynamicChildren(
     childrenIsChanged,
     setSlidesAndGroupsCallback
   );
-
-  return prevChildren;
 }
 
+/**
+ * Creates state with groups and returns this state and function to get current group id
+ *
+ * @param length children length
+ * @param startOffset number of slides to show at the same time
+ * @param slidesToScroll length of scroll
+ * @param slidesToShow number of slides to show at the same time
+ * @param infinite scrolling mode 
+ * @returns array of groups, function to set new current group index and function to get current group id
+ */
 export function useGroups(
   length: number,
   startOffset: number,
   slidesToScroll: number,
   slidesToShow: number,
   infinite: Infinite
-): [IGroup[], (groups: IGroup[]) => void] {
+): [IGroup[], (groups: IGroup[]) => void, (offset: number) => string] {
   const groups = initGroups(
     length,
     startOffset,
@@ -194,81 +228,79 @@ export function useGroups(
     infinite
   );
 
-  const [groupsState, setGroups] = useState<IGroup[]>(groups);
-  return [groupsState, setGroups];
-}
-
-//TODO FIX Progress
-export default function useProgress(
-  anim: boolean,
-  time: number,
-  isUsedProgress: boolean,
-  setProgress: (progress: number) => void
-): void {
-  useEffect(() => {
-    if (isUsedProgress) {
-      setProgress(0);
-
-      if (anim) {
-        let start = 0;
-        let reqId = 0;
-
-        const step = (timestamp: number) => {
-          start = start === 0 ? timestamp : start;
-
-          const progress = (timestamp - start) / time;
-          setProgress(progress);
-
-          if (progress <= 1) {
-            reqId = requestAnimationFrame(step);
-          }
-        };
-
-        requestAnimationFrame(step);
-        return () => cancelAnimationFrame(reqId);
-      }
+  /**
+   * Returns id of current group
+   *
+   * @param offset current offset
+   * @returns id of current group
+   */
+  const getCurrentGroup = (offset: number): string => {
+    for (let i = 0; i < groups.length - 1; i++) {
+      if (offset >= groups[i].offset && offset < groups[i + 1].offset)
+        return groups[i].id;
     }
-  }, [anim, time, setProgress, isUsedProgress]);
+
+    return groups[groups.length - 1].id;
+  };
+
+  const [groupsState, setGroups] = useState<IGroup[]>(groups);
+  return [groupsState, setGroups, getCurrentGroup];
 }
 
 export interface IAnimProgress {
-  transition: string;
+  transition: number;
+  state: 'increasing' | 'decreasing';
   progress: number;
 }
 
+/**
+ * Returns current progress and animation duration(in ms) to animate progress bar
+ *
+ * @param time time for one slide(group of slides) prop of carousel in ms
+ * @param anim specifies whether to animate to
+ * @param currentOffset current offset
+ * @param isSliding indicates whether the carousel is currently moving
+ * @param animationDuration scroll animation duration in ms
+ * @returns objects with current progress and animation duration(in ms)
+ */
 export function useAnimProgress(
   time: number,
   anim: boolean,
   currentOffset: number,
   isSliding: boolean,
-  animationDuration: number,
+  animationDuration: number
 ) {
   const [animProgress, setAnimProgress] = useState<IAnimProgress>({
-    transition: '',
+    transition: 0,
+    state: 'decreasing',
     progress: 0,
   });
+
   useEffect(() => {
     setAnimProgress({
-      transition: `width ${animationDuration}s`,
+      transition: animationDuration,
+      state: 'decreasing',
       progress: 0,
     });
 
     if (anim && !isSliding) {
       setAnimProgress({
-        transition: `width ${time}ms linear`,
+        transition: time,
+        state: 'increasing',
         progress: 1,
       });
       const timer = setTimeout(
         () =>
           setAnimProgress({
-            transition: '',
+            transition: animationDuration,
+            state: 'decreasing',
             progress: 0,
           }),
         time
       );
       return () => clearTimeout(timer);
     }
-  }, [time, anim, currentOffset, isSliding]);
+  }, [time, anim, currentOffset, isSliding, animationDuration]);
 
   return animProgress;
 }

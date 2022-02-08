@@ -10,15 +10,9 @@ import SlidesProvider, {
   ISlidesProviderProps as ISlidesProps,
 } from '../Slides/SlidesProvider';
 import { initSlideObjects, inverseDirection } from '../../helpers/helpers';
-import {
-  IControlButton,
-  Directions,
-  Infinite,
-  Slide,
-  Throttle,
-} from '../../types/types';
+import { IControlButton, Directions, Infinite, Slide, Throttle } from '../../types/types';
 import defaultProps from './carouselDefaultProps';
-import useProgress, {
+import {
   IAnimProgress,
   useAnimation,
   useAnimProgress,
@@ -53,15 +47,6 @@ export default function Carousel(userProps: ICarouselProps) {
   const slideWidth = width / props.slidesToShow;
   const trackLength = slides.length;
 
-  // Use groups
-  const [groups, setGroups] = useGroups(
-    props.children.length,
-    props.startOffset,
-    props.slidesToScroll,
-    props.slidesToShow,
-    props.infinite
-  );
-
   // Use offest controlled by CircularOffset class
   const [circularOffset, setOffset] = useCircularOffset(
     props.startOffset,
@@ -70,26 +55,9 @@ export default function Carousel(userProps: ICarouselProps) {
     trackLength,
     props.infinite
   );
-
-  /**
-   * Returns current index of current group
-   *
-   * @returns id of current group
-   */
-  const getCurrentGroup = (): string => {
-    for (let i = 0; i < groups.length - 1; i++) {
-      if (
-        circularOffset.offset >= groups[i].offset &&
-        circularOffset.offset < groups[i + 1].offset
-      )
-        return groups[i].id;
-    }
-
-    return groups[groups.length - 1].id;
-  };
-
-  // Get current Group
-  const currentGroup = getCurrentGroup();
+  const isRightEdge =
+    props.infinite === 'none' &&
+    circularOffset.offset !== trackLength - props.slidesToShow;
 
   // Use animation
   const [animation, setAnimation] = useAnimation({
@@ -97,17 +65,12 @@ export default function Carousel(userProps: ICarouselProps) {
     isSliding: false,
   });
 
-  // Use throttle for "fix" infinity mode
-  const [throttle, setThrottle] = useState<Throttle>(false);
-
   // Use infinity mode
-  useInfinityMode(
+  const setThrottle = useInfinityMode(
     animation.isSliding,
     props.infinite,
-    throttle,
     circularOffset,
-    setOffset,
-    setThrottle
+    setOffset
   );
 
   // "Memo" function to slide
@@ -122,7 +85,7 @@ export default function Carousel(userProps: ICarouselProps) {
         setOffset(offset);
       }
     },
-    [animation.isSliding, props.animationDuration, setAnimation, setOffset]
+    [animation.isSliding, props.animationDuration, setAnimation, setOffset, setThrottle]
   );
   const slide = useCallback(
     (direction: Directions): void => {
@@ -136,12 +99,31 @@ export default function Carousel(userProps: ICarouselProps) {
   );
   const slideLeftCallback = useCallback(() => slide(Directions.Left), [slide]);
 
+  // Use groups
+  const [groups, setGroups, getCurrentGroup] = useGroups(
+    props.children.length,
+    props.startOffset,
+    props.slidesToScroll,
+    props.slidesToShow,
+    props.infinite
+  );
+  // Get current Group
+  const currentGroup = getCurrentGroup(circularOffset.offset);
+
+  // Create dots objects from groups
+  const dots = groups.map<IDot>(el => {
+    return {
+      id: el.id,
+      isCurrent: currentGroup === el.id,
+      onClickHandler: () => slideTo(el.offset),
+    };
+  });
+
   // Use autoplay function
   const [isPlay, setIsPlay] = useAutoplay(
-    props.autoplay,
+    props.autoplay && !animation.isSliding && isRightEdge,
     props.autoplaySpeed,
     circularOffset.offset,
-    animation.isSliding,
     slideRightCallback
   );
 
@@ -156,27 +138,21 @@ export default function Carousel(userProps: ICarouselProps) {
     setGroups
   );
 
+  // Use progress with css transition animation
   const animProgress = useAnimProgress(
     props.autoplaySpeed * 1000,
-    props.useProgress && isPlay,
+    props.useProgress && isPlay && isRightEdge,
     circularOffset.offset,
     animation.isSliding,
-    props.animationDuration
+    props.animationDuration * 1000
   );
 
+  // Props to SlidesProvider
   const slidesProps: ISlidesProps = {
     slideWidth,
     transition: animation.transition,
     transform: circularOffset.offset * slideWidth,
   };
-
-  const dots = groups.map<IDot>(el => {
-    return {
-      id: el.id,
-      isCurrent: currentGroup === el.id,
-      onClickHandler: () => slideTo(el.offset),
-    };
-  });
 
   return (
     <div className={classes.carousel} ref={ref}>
@@ -194,44 +170,48 @@ export default function Carousel(userProps: ICarouselProps) {
       {props.controllButtonLeft ? (
         props.controllButtonLeft(slideLeftCallback)
       ) : (
-        <ControlButton
-          type={Directions.Left}
-          onClick={slideLeftCallback}
-          className={props.prevButton.className}
-          style={props.prevButton.style}
-        >
-          {props.prevButton.children}
-        </ControlButton>
+        <ControlButton type={Directions.Left} onClick={slideLeftCallback} />
       )}
       {props.controllButtonRight ? (
         props.controllButtonRight(slideRightCallback)
       ) : (
-        <ControlButton
-          type={Directions.Right}
-          onClick={slideRightCallback}
-          className={props.nextButton.className}
-          style={props.nextButton.style}
-        >
-          {props.nextButton.children}
-        </ControlButton>
+        <ControlButton type={Directions.Right} onClick={slideRightCallback} />
       )}
       {props.pauseButton
         ? props.pauseButton(isPlay, setIsPlay)
         : props.usePauseButton && (
-            <PauseButton isPlay={isPlay} setIsPlay={setIsPlay} />
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <PauseButton isPlay={isPlay} setIsPlay={setIsPlay} />
+            </div>
           )}
     </div>
   );
 }
 
+/**
+ * Add "infinity" mode to slider.
+ * Silently resets the slider offset its initial position for infinite scrolling
+ *
+ * @param isSliding indicates whether the carousel is currently moving
+ * @param infinite `infinite` prop of carousel
+ * @param circularOffset CircularOffset object that controls the offset
+ * @param setOffset function that sets new offset
+ * @return function to change throttle
+ */
 function useInfinityMode(
   isSliding: boolean,
   infinite: Infinite,
-  throttle: Throttle,
   circularOffset: CircularOffset,
-  setOffset: (offset: number) => void,
-  setThrottle: (throttle: Throttle) => void
-) {
+  setOffset: (offset: number) => void
+): (throttle: Throttle) => void {
+  /**
+   * Limits automatic transition between cycles.
+   * If equals 0 then the automatic transition to the left is disabled.
+   * If equals 1 then the automatic transition to the right is disabled.
+   * If false then the the automatic transition is available in both directions
+   */
+  const [throttle, setThrottle] = useState<Throttle>(Directions.Left);
+
   useEffect(() => {
     if (!isSliding && infinite === 'infinite') {
       const isShouldReset = circularOffset.isShouldReset();
@@ -249,13 +229,12 @@ function useInfinityMode(
     setThrottle,
     throttle,
   ]);
+
+  return setThrottle;
 }
 
 export interface ICarouselProps {
   children: Slide[];
-
-  prevButton?: IControlButton;
-  nextButton?: IControlButton;
 
   infinite?: Infinite;
   slidesToShow?: number;

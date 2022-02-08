@@ -7,8 +7,8 @@ export interface ISlideObj {
 }
 
 export type Infinite = 'infinite' | 'loop' | 'none';
-export type Throttle = Directions | false;
 export type ArrowType = 'up' | 'down' | 'right' | 'left';
+export type Throttle = Directions | false;
 
 export interface IGroup {
   id: string;
