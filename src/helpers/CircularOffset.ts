@@ -5,7 +5,7 @@ export class CircularOffset {
 
   private readonly _slidesToShow: number;
   private readonly _slidesToScroll: number;
-  private readonly _trackLength: number;
+  private  _trackLength: number;
   private readonly _infinite: Infinite;
 
   constructor(
@@ -35,9 +35,9 @@ export class CircularOffset {
     return this._attemptRotate(direction);
   };
 
-  public isShouldReset = (): Directions | false => {
+  public isShouldReset = (): Directions | false => {    
     const offset = this._trackLength - this._slidesToShow - this._offset;
-
+    
     if (offset < this._slidesToScroll) return Directions.Right;
     else if (this._offset < this._slidesToScroll) return Directions.Left;
 
@@ -57,8 +57,12 @@ export class CircularOffset {
     return direction;
   };
 
-  public setOffset(offset: number): void {
+  public set offset(offset: number) {
     this._offset = offset;
+  }
+
+  public set trackLength(trackLength: number) {
+    this._trackLength = trackLength;
   }
 
   private _rotateLoop(direction: Directions): number {

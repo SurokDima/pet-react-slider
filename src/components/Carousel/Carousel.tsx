@@ -68,7 +68,7 @@ export default function Carousel(userProps: ICarouselProps) {
     setOffset
   );
 
-  // "Memo" function to slide
+  // "Memo" functions to slide
   const slideTo = useCallback(
     (offset: number): void => {
       if (!animation.isSliding) {

@@ -109,7 +109,7 @@ export function useCircularOffset(
   infinite: Infinite
 ): [Readonly<CircularOffset>, (offset: number) => void] {
   const [offset, setOffset] = useOffset(startOffset, slidesToShow, infinite);
-  const [circular] = useState<Readonly<CircularOffset>>(
+  const [circular] = useState<CircularOffset>(
     new CircularOffset(
       offset,
       trackLength,
@@ -118,7 +118,8 @@ export function useCircularOffset(
       infinite
     )
   );
-  circular.setOffset(offset);
+  circular.offset = offset;
+  circular.trackLength = trackLength;
 
   return [circular, setOffset];
 }
