@@ -1,4 +1,3 @@
-import { relative } from 'path';
 import classes from '../../styles/PauseButton.module.scss';
 
 export default function PauseButton({ isPlay, setIsPlay }: IPauseButtonProps) {

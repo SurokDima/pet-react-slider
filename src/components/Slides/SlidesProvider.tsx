@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import { CSSProperties } from 'react';
 
 import classes from '../../styles/Slides.module.scss';
 import { ISlideObj } from '../../types/types';
