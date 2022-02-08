@@ -2,6 +2,7 @@ import {
   RefObject,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -131,7 +132,8 @@ export function useCircularOffset(
 export function useAnimation(
   startState: Readonly<IAnimationState>
 ): [IAnimationState, (animState: IAnimationState) => void] {
-  const [animation, setAnimation] = useState<Readonly<IAnimationState>>(startState);
+  const [animation, setAnimation] =
+    useState<Readonly<IAnimationState>>(startState);
 
   useEffect(() => {
     if (animation.isSliding) {
@@ -160,10 +162,7 @@ export function useAnimation(
 export function useCustomValueChangeLogic<T>(
   prevValue: Readonly<T>,
   newValue: Readonly<T>,
-  isChanged: (
-    prevChildren: Readonly<T>,
-    newChildren: Readonly<T>
-  ) => boolean,
+  isChanged: (prevChildren: Readonly<T>, newChildren: Readonly<T>) => boolean,
   callback: () => void
 ): void {
   useEffect(() => {
@@ -241,14 +240,12 @@ export function useGroups(
   slidesToShow: number,
   infinite: Infinite
 ): [readonly IGroup[], (groups: IGroup[]) => void, (offset: number) => string] {
-  const groups = initGroups(
-    length,
-    startOffset,
-    slidesToShow,
-    slidesToScroll,
-    infinite
+  // To prevent invoking initGroups() on every rerender
+  const groups = useMemo(
+    () =>
+      initGroups(length, startOffset, slidesToShow, slidesToScroll, infinite),
+    [infinite, length, slidesToScroll, slidesToShow, startOffset]
   );
-
   const [groupsState, setGroups] = useState<readonly IGroup[]>(groups);
 
   /**
@@ -259,7 +256,7 @@ export function useGroups(
    */
   const getCurrentGroup = (offset: number): string => {
     for (let i = 0; i < groupsState.length - 1; i++) {
-      if (offset >= groupsState[i].offset && offset < groups[i + 1].offset)
+      if (offset >= groupsState[i].offset && offset < groupsState[i + 1].offset)
         return groupsState[i].id;
     }
 

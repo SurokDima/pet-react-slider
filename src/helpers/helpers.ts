@@ -41,7 +41,7 @@ export function attachIdToSlides(slides: readonly Slide[]): ISlideObj[] {
 
 /**
  * Returns new array of slide objects
- * 
+ *
  * @param children input array
  * @param slidesToShow number of slides to show at the same time
  * @param infinite scrolling mode
@@ -65,10 +65,9 @@ export function inverseDirection(direction: Directions): Directions {
   return direction === Directions.Right ? Directions.Left : Directions.Right;
 }
 
-
 /**
  * Returns true if array contains undefined and false otherwise
- * 
+ *
  * @param items input array of items that may contain undefined
  * @returns true if array contains undefined and false otherwise
  */
@@ -78,14 +77,14 @@ export function isContainsUndefined<T>(items: readonly T[]): boolean {
 
 /**
  * Returns true if children have changed and false otherwise
- * 
+ *
  * @param newChildren new children
  * @param prevChildren previous children
  * @returns true if children have changed and false otherwise
  */
 export function childrenIsChanged(
   newChildren: readonly Slide[],
-  prevChildren: readonly Slide[],
+  prevChildren: readonly Slide[]
 ): boolean {
   if (prevChildren.length !== newChildren.length) return true;
 
@@ -114,7 +113,7 @@ export function limitOffset(
 
 /**
  * Returns new array of groups
- * 
+ *
  * @param length children length
  * @param startOffset default offset
  * @param slidesToShow number of slides to show at the same time
@@ -129,7 +128,9 @@ export function initGroups(
   slidesToScroll: number,
   infinite: Infinite
 ): IGroup[] {
-  const numberOfGroups = Math.floor(length / slidesToScroll);
+  const numberOfGroups = Math.floor(
+    (length - (slidesToShow - slidesToScroll)) / slidesToScroll
+  );
 
   const groups = [];
 

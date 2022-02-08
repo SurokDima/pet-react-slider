@@ -108,7 +108,6 @@ export default function Carousel(userProps: ICarouselProps) {
   );
   // Get current Group
   const currentGroup = getCurrentGroup(circularOffset.offset);
-    console.log(groups, currentGroup);
     
   // Create dots objects from groups
   const dots = groups.map<Readonly<IDot>>(el => {

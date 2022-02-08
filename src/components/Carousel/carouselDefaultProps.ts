@@ -2,13 +2,13 @@ import { ICarouselProps } from './Carousel';
 
 const carouselDefaultProps: Required<ICarouselProps> = {
   children: [],
-  slidesToShow: 2,
+  slidesToShow: 3,
   slidesToScroll: 1, 
   autoplay: true,
   autoplaySpeed: 3,
   startOffset: 0,
   animationDuration: 0.5,
-  infinite: 'none',
+  infinite: 'infinite',
 
   useProgress: false,
   useDotsProvider: false,
