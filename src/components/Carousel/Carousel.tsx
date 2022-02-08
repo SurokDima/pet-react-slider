@@ -1,9 +1,4 @@
-import {
-  ReactNode,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import SlidesProvider, {
   ISlidesProviderProps as ISlidesProps,
@@ -55,8 +50,9 @@ export default function Carousel(userProps: ICarouselProps) {
     props.infinite
   );
   const isRightEdge =
-    props.infinite === 'none' &&
-    circularOffset.offset !== trackLength - props.slidesToShow;
+    props.infinite !== 'none' ||
+    (props.infinite === 'none' &&
+      circularOffset.offset !== trackLength - props.slidesToShow);
 
   // Use animation
   const [animation, setAnimation] = useAnimation({
@@ -84,7 +80,13 @@ export default function Carousel(userProps: ICarouselProps) {
         setOffset(offset);
       }
     },
-    [animation.isSliding, props.animationDuration, setAnimation, setOffset, setThrottle]
+    [
+      animation.isSliding,
+      props.animationDuration,
+      setAnimation,
+      setOffset,
+      setThrottle,
+    ]
   );
   const slide = useCallback(
     (direction: Directions): void => {
@@ -108,7 +110,7 @@ export default function Carousel(userProps: ICarouselProps) {
   );
   // Get current Group
   const currentGroup = getCurrentGroup(circularOffset.offset);
-    
+
   // Create dots objects from groups
   const dots = groups.map<Readonly<IDot>>(el => {
     return {
@@ -117,7 +119,6 @@ export default function Carousel(userProps: ICarouselProps) {
       onClickHandler: () => slideTo(el.offset),
     };
   });
-  
 
   // Use autoplay function
   const [isPlay, setIsPlay] = useAutoplay(
@@ -207,7 +208,10 @@ export interface ICarouselProps {
   usePauseButton?: boolean;
 
   dotsProvider?:
-    | ((dots: readonly IDot[], animProgress?: Readonly<IAnimProgress>) => ReactNode)
+    | ((
+        dots: readonly IDot[],
+        animProgress?: Readonly<IAnimProgress>
+      ) => ReactNode)
     | null;
   progressBar?: ((animProgress: Readonly<IAnimProgress>) => ReactNode) | null;
   pauseButton?:

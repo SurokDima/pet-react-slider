@@ -131,7 +131,7 @@ export function useCircularOffset(
  */
 export function useAnimation(
   startState: Readonly<IAnimationState>
-): [IAnimationState, (animState: IAnimationState) => void] {
+): [IAnimationState, (animState: Readonly<IAnimationState>) => void] {
   const [animation, setAnimation] =
     useState<Readonly<IAnimationState>>(startState);
 
@@ -189,10 +189,10 @@ export function useDynamicChildren(
   slidesToShow: number,
   slidesToScroll: number,
   infinite: Infinite,
-  setSlides: (slides: ISlideObj[]) => void,
-  setGroups: (groups: IGroup[]) => void
+  setSlides: (slides: readonly ISlideObj[]) => void,
+  setGroups: (groups: readonly IGroup[]) => void
 ) {
-  const [prevChildren] = useState<Slide[]>([...children]);
+  const [prevChildren] = useState<readonly Slide[]>([...children]);
 
   const setSlidesAndGroupsCallback = useCallback<() => void>(() => {
     setSlides(initSlideObjects(children, slidesToShow, infinite));
@@ -239,7 +239,11 @@ export function useGroups(
   slidesToScroll: number,
   slidesToShow: number,
   infinite: Infinite
-): [readonly IGroup[], (groups: IGroup[]) => void, (offset: number) => string] {
+): [
+  readonly IGroup[],
+  (groups: readonly IGroup[]) => void,
+  (offset: number) => string
+] {
   // To prevent invoking initGroups() on every rerender
   const groups = useMemo(
     () =>
