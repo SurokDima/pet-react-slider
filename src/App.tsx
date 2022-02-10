@@ -1,12 +1,12 @@
 import { useState, Suspense, lazy } from 'react';
 import { nanoid } from 'nanoid';
 
-import { IDot } from './components/Carousel/Carousel';
 import DotsProvider from './components/DotsProvider/DotsProvider';
 
 import classes from './styles/App.module.scss';
 import { IAnimProgress } from './helpers/hooks';
 import ProgressBar from './components/ProgressBar/ProgressBar';
+import { IDot } from './components/Carousel/CarouselDotsProvider/CarouselDotsProvider';
 
 const Carousel = lazy(() => import('./components/Carousel/Carousel'));
 
