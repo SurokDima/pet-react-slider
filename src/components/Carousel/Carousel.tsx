@@ -1,4 +1,4 @@
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 
 import SlidesProvider, {
   ISlidesProviderProps as ISlidesProps,
@@ -34,96 +34,105 @@ export default function Carousel(userProps: ICarouselProps) {
     [userProps]
   );
 
+  const {
+    children,
+    startOffset,
+    slidesToShow,
+    slidesToScroll,
+    infinite,
+    animationDuration,
+    autoplaySpeed,
+    autoplay,
+  } = props;
+
+  const carouselProps = {
+    startOffset,
+    slidesToScroll,
+    slidesToShow,
+    infinite,
+  };
+
   // Use width of root element
   const [width, ref] = useWidth<HTMLDivElement>(0);
 
   // Use slides and calc their length and count
   const [slides, setSlides] = useState<readonly ISlideObj[]>(
-    initSlideObjects(props.children, props.slidesToShow, props.infinite)
+    initSlideObjects(children, slidesToShow, infinite)
   );
-  const slideWidth = width / props.slidesToShow;
+  const slideWidth = width / slidesToShow;
   const trackLength = slides.length;
 
   // Use offest controlled by CircularOffset class
-  const [circularOffset, setOffset] = useCircularOffset(
-    props.startOffset,
-    props.slidesToShow,
-    props.slidesToScroll,
+  const [circularOffset, setOffset] = useCircularOffset({
     trackLength,
-    props.infinite
-  );
+    ...carouselProps
+  });
   const isRightEdge =
-    props.infinite !== 'none' ||
-    (props.infinite === 'none' && circularOffset.offset !== trackLength - props.slidesToShow);
+    infinite !== 'none' ||
+    (infinite === 'none' &&
+      circularOffset.offset !== trackLength - slidesToShow);
 
   // Use animation
-  const [animation, setAnimation] = useAnimation({
+  const [{ isSliding, transition }, setAnimation] = useAnimation({
     transition: 0,
     isSliding: false,
   });
 
   // Use infinity mode
-  const setThrottle = useInfinityMode(
-    animation.isSliding,
-    props.infinite,
+  const setThrottle = useInfinityMode({
+    isSliding,
+    infinite,
     circularOffset,
-    setOffset
-  );
+    setOffset,
+  });
 
-    // "Memo" functions to slide
-  const { slideTo, slideRightCallback, slideLeftCallback } =
-    useSlideFunctions(
-      animation.isSliding,
-      props.animationDuration,
-      setThrottle,
-      setAnimation,
-      setOffset,
-      circularOffset.rotate
-    );
+  // "Memo" functions to slide
+  const { slideTo, slideRightCallback, slideLeftCallback } = useSlideFunctions({
+    isSliding,
+    animationDuration,
+    setThrottle,
+    setAnimation,
+    setOffset,
+    rotate: circularOffset.rotate,
+  });
 
   // Use groups
-  const [groups, setGroups, getCurrentGroup] = useGroups(
-    props.children.length,
-    props.startOffset,
-    props.slidesToScroll,
-    props.slidesToShow,
-    props.infinite
-  );
+  const [groups, setGroups, getCurrentGroup] = useGroups({
+    length: children.length,
+    ...carouselProps
+  });
   // Get current Group
   const currentGroup = getCurrentGroup(circularOffset.offset);
 
   // Use autoplay function
-  const [isPlay, setIsPlay] = useAutoplay(
-    props.autoplay && !animation.isSliding && isRightEdge,
-    props.autoplaySpeed,
-    circularOffset.offset,
-    slideRightCallback
-  );
+  const [isPlay, setIsPlay] = useAutoplay({
+    autoplay: autoplay && !isSliding && isRightEdge,
+    autoplaySpeed,
+    currentOffset: circularOffset.offset,
+    slide: slideRightCallback
+  });
 
   // Watch for children changes
-  useDynamicChildren(
-    props.children,
-    props.startOffset,
-    props.slidesToShow,
-    props.slidesToScroll,
-    props.infinite,
+  useDynamicChildren({
+    children,
     setSlides,
-    setGroups
-  );
+    setGroups,
+    ...carouselProps
+  });
 
   // Use progress with css transition animation
-  const animProgress = useAnimProgress(
-    props.autoplaySpeed * 1000,
-    props.useProgress && isPlay && isRightEdge,
-    circularOffset.offset,
-    animation.isSliding,
-    props.animationDuration * 1000
-  );
+  const animProgress = useAnimProgress({
+    time: autoplaySpeed * 1000,
+    anim: props.useProgress && isPlay && isRightEdge,
+    currentOffset: circularOffset.offset,
+    isSliding,
+    animationDuration: animationDuration * 1000
+  });
 
   // Props to SlidesProvider
   const slidesProps: ISlidesProps = {
     slideWidth,
-    transition: animation.transition,
+    transition: transition,
     transform: circularOffset.offset * slideWidth,
   };
 
@@ -167,6 +176,17 @@ export default function Carousel(userProps: ICarouselProps) {
       />
     </div>
   );
+}
+
+interface IUseCarouselArguments {
+  startOffset: number,
+  slidesToShow: number,
+  slidesToScroll: number,
+  infinite: Infinite,
+}
+
+function useCarousel() {
+  
 }
 
 export interface ICarouselProps {

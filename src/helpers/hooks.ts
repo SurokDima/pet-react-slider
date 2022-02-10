@@ -47,6 +47,12 @@ export function useWidth<T extends HTMLElement>(
   return [width, ref];
 }
 
+interface IUseAutoplayArguments {
+  autoplay: boolean;
+  autoplaySpeed: number;
+  currentOffset: number;
+  slide: () => void;
+}
 /**
  * Crates new state to autoplay offset
  *
@@ -56,12 +62,12 @@ export function useWidth<T extends HTMLElement>(
  * @param slide right move function
  * @returns isPlay sate and function to change this state
  */
-export function useAutoplay(
-  autoplay: boolean,
-  autoplaySpeed: number,
-  currentOffset: number,
-  slide: () => void
-): [boolean, (isPlay: boolean) => void] {
+export function useAutoplay({
+  autoplay,
+  autoplaySpeed,
+  currentOffset,
+  slide,
+}: IUseAutoplayArguments): [boolean, (isPlay: boolean) => void] {
   const [isPlay, setIsPlay] = useState<boolean>(autoplay);
 
   useEffect(() => {
@@ -92,6 +98,13 @@ export function useOffset(
   );
 }
 
+interface IUseCircularOffsetArguments {
+  startOffset: number;
+  slidesToShow: number;
+  slidesToScroll: number;
+  trackLength: number;
+  infinite: Infinite;
+}
 /**
  * Creates offset state hook and returns new CircularOffset object
  *
@@ -101,13 +114,16 @@ export function useOffset(
  * @param trackLength number of slides
  * @param infinite scrolling mode
  */
-export function useCircularOffset(
-  startOffset: number,
-  slidesToShow: number,
-  slidesToScroll: number,
-  trackLength: number,
-  infinite: Infinite
-): [Readonly<CircularOffset>, (arg: number) => void] {
+export function useCircularOffset({
+  startOffset,
+  slidesToShow,
+  slidesToScroll,
+  trackLength,
+  infinite,
+}: IUseCircularOffsetArguments): [
+  Readonly<CircularOffset>,
+  (arg: number) => void
+] {
   const [offset, setOffset] = useOffset(startOffset, slidesToShow, infinite);
   const [circular] = useState<CircularOffset>(
     new CircularOffset(
@@ -123,15 +139,23 @@ export function useCircularOffset(
 
   return [circular, setOffset];
 }
+interface IUseSlideFunctionsArguments {
+  isSliding: boolean;
+  animationDuration: number;
+  setThrottle: (arg: Throttle) => void;
+  setAnimation: (arg: Readonly<IAnimationState>) => void;
+  setOffset: (arg: number) => void;
+  rotate: (arg: Directions) => number;
+}
 
-export function useSlideFunctions(
-  isSliding: boolean,
-  animationDuration: number,
-  setThrottle: (arg: Throttle) => void,
-  setAnimation: (arg: Readonly<IAnimationState>) => void,
-  setOffset: (arg: number) => void,
-  rotate: (arg: Directions) => number
-) {
+export function useSlideFunctions({
+  isSliding,
+  animationDuration,
+  setThrottle,
+  setAnimation,
+  setOffset,
+  rotate,
+}: IUseSlideFunctionsArguments) {
   const slideTo = useCallback(
     (offset: number): void => {
       if (!isSliding) {
@@ -209,6 +233,15 @@ export function useCustomValueChangeLogic<T>(
   }, [callback, isChanged, newValue, prevValue]);
 }
 
+interface IUseDynamicChildrenArguments {
+  children: readonly Slide[];
+  startOffset: number;
+  slidesToShow: number;
+  slidesToScroll: number;
+  infinite: Infinite;
+  setSlides: (slides: readonly ISlideObj[]) => void;
+  setGroups: (groups: readonly IGroup[]) => void;
+}
 /**
  * Monitors children changes and recreates slides and groups if children have changed.
  *
@@ -220,15 +253,15 @@ export function useCustomValueChangeLogic<T>(
  * @param setSlides function to set slides
  * @param setGroups function to set groups
  */
-export function useDynamicChildren(
-  children: readonly Slide[],
-  startOffset: number,
-  slidesToShow: number,
-  slidesToScroll: number,
-  infinite: Infinite,
-  setSlides: (slides: readonly ISlideObj[]) => void,
-  setGroups: (groups: readonly IGroup[]) => void
-) {
+export function useDynamicChildren({
+  children,
+  startOffset,
+  slidesToShow,
+  slidesToScroll,
+  infinite,
+  setSlides,
+  setGroups,
+}: IUseDynamicChildrenArguments) {
   const [prevChildren] = useState<readonly Slide[]>([...children]);
 
   const setSlidesAndGroupsCallback = useCallback<() => void>(() => {
@@ -260,6 +293,13 @@ export function useDynamicChildren(
   );
 }
 
+interface IUseGroupsArguments {
+  length: number;
+  startOffset: number;
+  slidesToScroll: number;
+  slidesToShow: number;
+  infinite: Infinite;
+}
 /**
  * Creates state with groups and returns this state and function to get current group id
  *
@@ -270,13 +310,13 @@ export function useDynamicChildren(
  * @param infinite scrolling mode
  * @returns array of groups, function to set new current group index and function to get current group id
  */
-export function useGroups(
-  length: number,
-  startOffset: number,
-  slidesToScroll: number,
-  slidesToShow: number,
-  infinite: Infinite
-): [
+export function useGroups({
+  length,
+  startOffset,
+  slidesToScroll,
+  slidesToShow,
+  infinite,
+}: IUseGroupsArguments): [
   readonly IGroup[],
   (groups: readonly IGroup[]) => void,
   (offset: number) => string
@@ -313,6 +353,13 @@ export interface IAnimProgress {
   progress: number;
 }
 
+interface IUseAnimProgressArguments {
+  time: number;
+  anim: boolean;
+  currentOffset: number;
+  isSliding: boolean;
+  animationDuration: number;
+}
 /**
  * Returns current progress and animation duration(in ms) to animate progress bar
  *
@@ -323,13 +370,13 @@ export interface IAnimProgress {
  * @param animationDuration scroll animation duration in ms
  * @returns objects with current progress and animation duration(in ms)
  */
-export function useAnimProgress(
-  time: number,
-  anim: boolean,
-  currentOffset: number,
-  isSliding: boolean,
-  animationDuration: number
-) {
+export function useAnimProgress({
+  time,
+  anim,
+  currentOffset,
+  isSliding,
+  animationDuration,
+}: IUseAnimProgressArguments) {
   const [animProgress, setAnimProgress] = useState<Readonly<IAnimProgress>>({
     transition: 0,
     state: 'decreasing',
@@ -365,6 +412,12 @@ export function useAnimProgress(
   return animProgress;
 }
 
+interface IUseInfinityModeArguments {
+  isSliding: boolean;
+  infinite: Infinite;
+  circularOffset: Readonly<CircularOffset>;
+  setOffset: (offset: number) => void;
+}
 /**
  * Add "infinity" mode to slider.
  * Silently resets the slider offset its initial position for infinite scrolling
@@ -375,12 +428,12 @@ export function useAnimProgress(
  * @param setOffset function that sets new offset
  * @return function to change throttle
  */
-export function useInfinityMode(
-  isSliding: boolean,
-  infinite: Infinite,
-  circularOffset: Readonly<CircularOffset>,
-  setOffset: (offset: number) => void
-): (throttle: Throttle) => void {
+export function useInfinityMode({
+  isSliding,
+  infinite,
+  circularOffset,
+  setOffset,
+}: IUseInfinityModeArguments): (throttle: Throttle) => void {
   /**
    * Limits automatic transition between cycles.
    * If equals 0 then the automatic transition to the left is disabled.
