@@ -148,6 +148,17 @@ interface IUseSlideFunctionsArguments {
   rotate: (arg: Directions) => number;
 }
 
+/**
+ * Returns "memo" functions to slide
+ * 
+ * @param isSliding indicates whether the carousel is currently moving
+ * @param animationDuration duration of animation between slides
+ * @param setThrottle function to set throttle
+ * @param setAnimation function to set animation propeties
+ * @param setOffset function to set current offset
+ * @param rotate function to change offset by direction
+ * @returns "memo" functions to slide
+ */
 export function useSlideFunctions({
   isSliding,
   animationDuration,

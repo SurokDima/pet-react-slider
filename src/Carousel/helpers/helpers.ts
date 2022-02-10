@@ -95,6 +95,15 @@ export function childrenIsChanged(
   return isContainsUndefined<Slide | undefined>(matchedSlides);
 }
 
+/**
+ * Returns offset limited by left and right edges
+ * 
+ * @param offset offset to limit
+ * @param trackLength length of track
+ * @param slidesToShow number of slides to show at the same time
+ * @param infinites scrolling mode
+ * @returns limimted offset
+ */
 export function limitOffset(
   offset: number,
   trackLength: number,

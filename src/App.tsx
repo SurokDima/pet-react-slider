@@ -1,14 +1,14 @@
 import { useState, Suspense, lazy } from 'react';
 import { nanoid } from 'nanoid';
 
-import DotsProvider from './components/DotsProvider/DotsProvider';
+import DotsProvider from './Carousel/components/DotsProvider/DotsProvider';
 
 import classes from './styles/App.module.scss';
-import { IAnimProgress } from './helpers/hooks';
-import ProgressBar from './components/ProgressBar/ProgressBar';
-import { IDot } from './components/Carousel/CarouselDotsProvider/CarouselDotsProvider';
+import ProgressBar from './Carousel/components/ProgressBar/ProgressBar';
+import { IDot } from './Carousel/components/Carousel/CarouselDotsProvider/CarouselDotsProvider';
+import { IAnimProgress } from './Carousel/helpers/hooks';
 
-const Carousel = lazy(() => import('./components/Carousel/Carousel'));
+const Carousel = lazy(() => import('./Carousel/components/Carousel/Carousel'));
 
 interface ISlide {
   id: string;
