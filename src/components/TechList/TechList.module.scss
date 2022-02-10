@@ -1,0 +1,12 @@
+.techList {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.tech {
+  margin-right: .9375rem;
+
+  &:last-child {
+    margin: 0;
+  }
+}

@@ -1,77 +1,75 @@
-import { useState, Suspense, lazy } from 'react';
-import { nanoid } from 'nanoid';
-
-import DotsProvider from './Carousel/components/DotsProvider/DotsProvider';
-
-import classes from './styles/App.module.scss';
-import ProgressBar from './Carousel/components/ProgressBar/ProgressBar';
-import { IDot } from './Carousel/components/Carousel/CarouselDotsProvider/CarouselDotsProvider';
-import { IAnimProgress } from './Carousel/helpers/hooks';
-
-const Carousel = lazy(() => import('./Carousel/components/Carousel/Carousel'));
-
-interface ISlide {
-  id: string;
-  content: number;
-}
+import Carousel from './Carousel/components/Carousel/Carousel';
+import Code from './components/Code/Code';
+import Header from './components/Header/Header';
+import Section from './components/Section/Section';
+import Title from './components/Title/Title';
+import Layout from './containers/Layout/Layout';
+import classes from './App.module.scss';
 
 function App() {
-  const [slides, setSlides] = useState<ISlide[]>([
-    { id: nanoid(), content: 1 },
-    { id: nanoid(), content: 2 },
-    { id: nanoid(), content: 3 },
-    { id: nanoid(), content: 4 },
-    { id: nanoid(), content: 5 },
-    { id: nanoid(), content: 6 },
-  ]);
-
-  const loading = <h1>Loading</h1>;
-
   return (
-    <div className={classes.app}>
-      <Suspense fallback={loading}>
-        <Carousel
-          dotsProvider={(dots: readonly IDot[]) => <DotsProvider dots={dots} />}
-          progressBar={(animProgress: IAnimProgress) => (
-            <ProgressBar animProgress={animProgress} />
-          )}
-          useProgress={true}
-        >
-          {slides.map(slide => (
-            <div className={classes.slide} key={slide.id}>
-              <h2 className={classes.slideContent}>{slide.content}</h2>
-            </div>
-          ))}
-        </Carousel>
+    <>
+      <Layout>
+        <Header
+          title={'My Carousel pet project'}
+          stack={['HTML', 'JS', 'CSS']}
+          description={
+            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+          }
+        />
 
-        <button
-          onClick={() => {
-            setSlides([
-              {
-                id: nanoid(),
-                content: slides[0].content - 1,
-              },
-              ...slides,
-            ]);
-          }}
-        >
-          New Slide At Start
-        </button>
-        <button
-          onClick={() => {
-            setSlides([
-              ...slides,
-              {
-                id: nanoid(),
-                content: slides[slides.length - 1].content + 1,
-              },
-            ]);
-          }}
-        >
-          New Slide At End
-        </button>
-      </Suspense>
-    </div>
+        <Section title={'My title'}>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis varius
+            massa sit amet scelerisque dignissim. Vivamus fermentum tellus vitae
+            sapien imperdiet, scelerisque tempus est ullamcorper. Quisque turpis
+            turpis, pellentesque sit amet libero sed, accumsan varius ipsum.
+            Nunc dictum turpis eu sapien auctor lobortis. In vehicula diam sit
+            amet ipsum molestie condimentum. Cras consectetur turpis vel luctus
+            hendrerit. Vivamus lacinia lacinia pharetra. Sed porta turpis non ex
+            semper, ut rhoncus lectus efficitur. Vivamus dictum fermentum ante,
+            non volutpat nisl laoreet eu. Quisque ac vehicula erat. Quisque
+            elementum, mauris vitae ornare cursus, ipsum lorem aliquet lorem, id
+            dignissim sapien nisi at tortor.
+          </p>
+          <Code>
+            {`
+<Carousel>
+  //...
+  <div className={classes.carouselItem}>
+    <div className={classes.carouselItemInner}>4</div>
+  </div>
+  //...
+</Carousel>`}
+          </Code>
+          <div className={classes.carouselContainer}>
+            <Carousel>
+              <div className={classes.carouselItem}>
+                <div className={classes.carouselItemInner}>1</div>
+              </div>
+              <div className={classes.carouselItem}>
+                <div className={classes.carouselItemInner}>2</div>
+              </div>
+              <div className={classes.carouselItem}>
+                <div className={classes.carouselItemInner}>3</div>
+              </div>
+              <div className={classes.carouselItem}>
+                <div className={classes.carouselItemInner}>4</div>
+              </div>
+              <div className={classes.carouselItem}>
+                <div className={classes.carouselItemInner}>5</div>
+              </div>
+              <div className={classes.carouselItem}>
+                <div className={classes.carouselItemInner}>6</div>
+              </div>
+              <div className={classes.carouselItem}>
+                <div className={classes.carouselItemInner}>7</div>
+              </div>
+            </Carousel>
+          </div>
+        </Section>
+      </Layout>
+    </>
   );
 }
 

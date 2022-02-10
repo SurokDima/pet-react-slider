@@ -1,0 +1,18 @@
+@use '../../asserts/styles/colors' as colors;
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+
+  margin: 0 auto;
+
+  background: lighten(colors.$black, 2%);
+  border-radius: 10px;
+
+  padding: 20px;
+}
+
+.content {
+  margin-left: 300px;
+  padding-top: 20px;
+}

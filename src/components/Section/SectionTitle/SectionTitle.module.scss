@@ -1,0 +1,9 @@
+@use '../../../asserts/styles/colors' as colors;
+
+.title {
+  color: colors.$white;
+  background: lighten(colors.$black, 8%);
+  padding: .3em 1em;
+  border-radius: 20px;
+  border-radius: 1.25rem 1.25rem 0 0 ;
+}

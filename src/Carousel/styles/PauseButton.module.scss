@@ -1,6 +1,6 @@
 .pauseButton {
   font-size: 30px;
-  color: lightblue;
+  color: lighten(#121212, 8%);
   position: relative;
   display: inline-block;
 
@@ -28,7 +28,7 @@
     }
 
     &:hover {
-      color: lighten(lightblue, 5%)
+      color: lighten(lighten(#121212, 8%), 10%)
     }
 
   }

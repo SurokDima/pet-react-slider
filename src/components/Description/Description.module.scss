@@ -1,0 +1,7 @@
+@use '../../asserts/styles/colors' as colors;
+
+.description {
+  color: colors.$white;
+  font-size: 1.2rem;
+  line-height: 1.5em;
+}
