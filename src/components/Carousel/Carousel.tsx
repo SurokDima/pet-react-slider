@@ -178,17 +178,6 @@ export default function Carousel(userProps: ICarouselProps) {
   );
 }
 
-interface IUseCarouselArguments {
-  startOffset: number,
-  slidesToShow: number,
-  slidesToScroll: number,
-  infinite: Infinite,
-}
-
-function useCarousel() {
-  
-}
-
 export interface ICarouselProps {
   children: readonly Slide[];
 
