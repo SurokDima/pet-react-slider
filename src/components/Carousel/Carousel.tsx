@@ -17,12 +17,14 @@ import {
   useInfinityMode,
   useWidth,
 } from '../../helpers/hooks';
-import ControlButton from '../ControlButton/ControlButton';
-import DotsProvider from '../DotsProvider/DotsProvider';
-import ProgressBar from '../ProgressBar/ProgressBar';
-import PauseButton from '../PauseButton/PauseButton';
 
 import classes from '../../styles/Carousel.module.scss';
+import { CarouselProgressBar } from './CarouselProgressBar/CarouselProgressBar';
+import CarouselDotsProvider, {
+  IDot,
+} from './CarouselDotsProvider/CarouselDotsProvider';
+import CarouselControlButton from './CarouselControlButton/CarouselControlButton';
+import { CarouselPauseButton } from './CarouselPauseButton/CarouselPauseButton';
 
 export default function Carousel(userProps: ICarouselProps) {
   // Merge props
@@ -111,15 +113,6 @@ export default function Carousel(userProps: ICarouselProps) {
   // Get current Group
   const currentGroup = getCurrentGroup(circularOffset.offset);
 
-  // Create dots objects from groups
-  const dots = groups.map<Readonly<IDot>>(el => {
-    return {
-      id: el.id,
-      isCurrent: currentGroup === el.id,
-      onClickHandler: () => slideTo(el.offset),
-    };
-  });
-
   // Use autoplay function
   const [isPlay, setIsPlay] = useAutoplay(
     props.autoplay && !animation.isSliding && isRightEdge,
@@ -160,31 +153,39 @@ export default function Carousel(userProps: ICarouselProps) {
       <div className={classes.window}>
         <SlidesProvider {...slidesProps}>{slides}</SlidesProvider>
       </div>
-      {props.progressBar
-        ? props.progressBar(animProgress)
-        : props.useProgress && <ProgressBar animProgress={animProgress} />}
 
-      {props.dotsProvider
-        ? props.dotsProvider(dots, animProgress)
-        : props.useDotsProvider && <DotsProvider dots={dots} />}
+      <CarouselProgressBar
+        animProgress={animProgress}
+        isUsedProgress={props.useProgress}
+        progressBar={props.progressBar}
+      />
 
-      {props.controllButtonLeft ? (
-        props.controllButtonLeft(slideLeftCallback)
-      ) : (
-        <ControlButton type={Directions.Left} onClick={slideLeftCallback} />
-      )}
-      {props.controllButtonRight ? (
-        props.controllButtonRight(slideRightCallback)
-      ) : (
-        <ControlButton type={Directions.Right} onClick={slideRightCallback} />
-      )}
-      {props.pauseButton
-        ? props.pauseButton(isPlay, setIsPlay)
-        : props.usePauseButton && (
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <PauseButton isPlay={isPlay} setIsPlay={setIsPlay} />
-            </div>
-          )}
+      <CarouselDotsProvider
+        animProgress={animProgress}
+        currentGroup={currentGroup}
+        dotsProvider={props.dotsProvider}
+        groups={groups}
+        isUsedDotsProvider={props.useDotsProvider}
+        slideTo={slideTo}
+      />
+      
+      <CarouselControlButton
+        type={Directions.Left}
+        callback={slideLeftCallback}
+        controllButton={props.controllButtonLeft}
+      />
+      <CarouselControlButton
+        type={Directions.Right}
+        callback={slideRightCallback}
+        controllButton={props.controllButtonRight}
+      />
+
+      <CarouselPauseButton
+        isPlay={isPlay}
+        setIsPlay={setIsPlay}
+        isUsedPauseButton={props.usePauseButton}
+        pauseButton={props.pauseButton}
+      />
     </div>
   );
 }
@@ -207,28 +208,28 @@ export interface ICarouselProps {
   useDotsProvider?: boolean;
   usePauseButton?: boolean;
 
-  dotsProvider?:
-    | ((
-        dots: readonly IDot[],
-        animProgress?: Readonly<IAnimProgress>
-      ) => ReactNode)
-    | null;
-  progressBar?: ((animProgress: Readonly<IAnimProgress>) => ReactNode) | null;
-  pauseButton?:
-    | ((isPlay: boolean, setIsPlay: (arg: boolean) => void) => ReactNode)
-    | null;
+  dotsProvider?: DotsProviderRenderProp | null;
+  progressBar?: ProgressBarRenderProp | null;
+  pauseButton?: PauseButtonRenderProp | null;
 
-  controllButtonLeft?: ((onClickHandler: () => void) => ReactNode) | null;
-  controllButtonRight?: ((onClickHandler: () => void) => ReactNode) | null;
+  controllButtonLeft?: ControlButtonRenderProp | null;
+  controllButtonRight?: ControlButtonRenderProp | null;
 }
+
+export type DotsProviderRenderProp = (
+  dots: readonly IDot[],
+  animProgress?: Readonly<IAnimProgress>
+) => ReactNode;
+export type ProgressBarRenderProp = (
+  animProgress: Readonly<IAnimProgress>
+) => ReactNode;
+export type PauseButtonRenderProp = (
+  isPlay: boolean,
+  setIsPlay: (arg: boolean) => void
+) => ReactNode;
+export type ControlButtonRenderProp = (onClickHandler: () => void) => ReactNode;
 
 export interface IAnimationState {
   transition: number;
   isSliding: boolean;
-}
-
-export interface IDot {
-  id: string;
-  isCurrent: boolean;
-  onClickHandler: () => void;
 }

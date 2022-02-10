@@ -1,7 +1,7 @@
 import Dot from './Dot/Dot';
 
 import classes from '../../styles/DotsProvider.module.scss';
-import { IDot } from '../Carousel/Carousel';
+import { IDot } from '../Carousel/CarouselDotsProvider/CarouselDotsProvider';
 
 export default function DotsProvider({
   dots
