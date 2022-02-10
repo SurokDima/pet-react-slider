@@ -15,6 +15,7 @@ import {
   useDynamicChildren,
   useGroups,
   useInfinityMode,
+  useSlideFunctions,
   useWidth,
 } from '../../helpers/hooks';
 
@@ -53,8 +54,7 @@ export default function Carousel(userProps: ICarouselProps) {
   );
   const isRightEdge =
     props.infinite !== 'none' ||
-    (props.infinite === 'none' &&
-      circularOffset.offset !== trackLength - props.slidesToShow);
+    (props.infinite === 'none' && circularOffset.offset !== trackLength - props.slidesToShow);
 
   // Use animation
   const [animation, setAnimation] = useAnimation({
@@ -70,37 +70,16 @@ export default function Carousel(userProps: ICarouselProps) {
     setOffset
   );
 
-  // "Memo" functions to slide
-  const slideTo = useCallback(
-    (offset: number): void => {
-      if (!animation.isSliding) {
-        setThrottle(false);
-        setAnimation({
-          transition: props.animationDuration,
-          isSliding: true,
-        });
-        setOffset(offset);
-      }
-    },
-    [
+    // "Memo" functions to slide
+  const { slideTo, slideRightCallback, slideLeftCallback } =
+    useSlideFunctions(
       animation.isSliding,
       props.animationDuration,
+      setThrottle,
       setAnimation,
       setOffset,
-      setThrottle,
-    ]
-  );
-  const slide = useCallback(
-    (direction: Directions): void => {
-      slideTo(circularOffset.rotate(direction));
-    },
-    [circularOffset, slideTo]
-  );
-  const slideRightCallback = useCallback(
-    () => slide(Directions.Right),
-    [slide]
-  );
-  const slideLeftCallback = useCallback(() => slide(Directions.Left), [slide]);
+      circularOffset.rotate
+    );
 
   // Use groups
   const [groups, setGroups, getCurrentGroup] = useGroups(
@@ -168,7 +147,7 @@ export default function Carousel(userProps: ICarouselProps) {
         isUsedDotsProvider={props.useDotsProvider}
         slideTo={slideTo}
       />
-      
+
       <CarouselControlButton
         type={Directions.Left}
         callback={slideLeftCallback}

@@ -107,7 +107,7 @@ export function useCircularOffset(
   slidesToScroll: number,
   trackLength: number,
   infinite: Infinite
-): [Readonly<CircularOffset>, (offset: number) => void] {
+): [Readonly<CircularOffset>, (arg: number) => void] {
   const [offset, setOffset] = useOffset(startOffset, slidesToShow, infinite);
   const [circular] = useState<CircularOffset>(
     new CircularOffset(
@@ -122,6 +122,42 @@ export function useCircularOffset(
   circular.trackLength = trackLength;
 
   return [circular, setOffset];
+}
+
+export function useSlideFunctions(
+  isSliding: boolean,
+  animationDuration: number,
+  setThrottle: (arg: Throttle) => void,
+  setAnimation: (arg: Readonly<IAnimationState>) => void,
+  setOffset: (arg: number) => void,
+  rotate: (arg: Directions) => number
+) {
+  const slideTo = useCallback(
+    (offset: number): void => {
+      if (!isSliding) {
+        setThrottle(false);
+        setAnimation({
+          transition: animationDuration,
+          isSliding: true,
+        });
+        setOffset(offset);
+      }
+    },
+    [isSliding, animationDuration, setAnimation, setOffset, setThrottle]
+  );
+  const slide = useCallback(
+    (direction: Directions): void => {
+      slideTo(rotate(direction));
+    },
+    [rotate, slideTo]
+  );
+  const slideRightCallback = useCallback(
+    () => slide(Directions.Right),
+    [slide]
+  );
+  const slideLeftCallback = useCallback(() => slide(Directions.Left), [slide]);
+
+  return { slideTo, slide, slideLeftCallback, slideRightCallback };
 }
 
 /**
