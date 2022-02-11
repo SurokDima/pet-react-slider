@@ -1,16 +1,19 @@
-import { ReactNode } from 'react';
+import { ReactNode, useContext } from 'react';
+import SectionsScrolling from '../../contexts/SectionsScrollingContext';
 import classes from './Section.module.scss';
 import SectionTitle from './SectionTitle/SectionTitle';
 
 export default function Section({ children, title, className }: ISectionProps) {
-  const cls = [classes.section];
+  const {sectionsClassName} = useContext(SectionsScrolling);
+
+  const cls = [classes.section, sectionsClassName];
   if(className) cls.push(className);
 
   return (
-    <div className={cls.join(' ')}>
+    <section className={cls.join(' ')}>
       {title && <SectionTitle>{title}</SectionTitle>}
       <div className={classes.sectionBody}>{children}</div>
-    </div>
+    </section>
   );
 }
 
