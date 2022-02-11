@@ -17,8 +17,7 @@ const carouselDefaultProps: Required<ICarouselProps> = {
   dotsProvider: null,
   progressBar: null,
   pauseButton: null,
-  controllButtonLeft: null,
-  controllButtonRight: null,
+  controlButtons: null
 };
 
 export default carouselDefaultProps;

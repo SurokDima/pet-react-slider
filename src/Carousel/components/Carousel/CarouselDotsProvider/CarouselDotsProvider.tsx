@@ -20,13 +20,11 @@ export default function CarouselDotsProvider({
     };
   });
 
-  return (
-    <>
-      {dotsProvider
-        ? dotsProvider(dots, animProgress)
-        : isUsedDotsProvider && <DotsProvider dots={dots} />}
-    </>
-  );
+  return dotsProvider ? (
+    dotsProvider(dots, animProgress)
+  ) : isUsedDotsProvider ? (
+    <DotsProvider dots={dots} />
+  ) : null;
 }
 
 export interface ICarouselDotsProvider {

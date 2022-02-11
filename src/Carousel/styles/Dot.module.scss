@@ -1,7 +1,5 @@
-$color-gray: #8D8D8D;
-
 .dot {
-  background: $color-gray;
+  background: #393e46;
   height: 15px;
   width: 15px;
   border-radius: 50%;
@@ -10,19 +8,21 @@ $color-gray: #8D8D8D;
 
   margin-right: 20px;
 
+  cursor: pointer;
+
   &:last-child {
     margin: 0;
   }
 
   &.active {
-    background: lightblue;
+    background: #d65a31;
 
     &:hover {
-      background: lighten(lightblue, 5%);
+      background: lighten(#d65a31, 5%);
     }
   }
 
   &:hover {
-    background: lighten($color-gray, 20%);
+    background: lighten(#393e46, 20%);
   }
 }

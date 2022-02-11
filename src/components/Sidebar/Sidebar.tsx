@@ -1,8 +1,12 @@
 import classes from './Sidebar.module.scss';
 
-export default function Sidebar({ items }: ISidebarProps) {
+export default function Sidebar({ items, className, isOpen }: ISidebarProps) {
+  const cls = [classes.sidebar];
+  if(className) cls.push(className)
+  if(isOpen) cls.push(classes.open);
+
   return (
-    <div className={classes.sidebar}>
+    <div className={cls.join(' ')}>
       {items.map((item, index) => {
         const cls = [classes.item];
         if(item.isActive) cls.push(classes.active);
@@ -19,6 +23,8 @@ export default function Sidebar({ items }: ISidebarProps) {
 
 interface ISidebarProps {
   items: readonly ISidebarItem[];
+  isOpen: boolean;
+  className?: string;
 }
 
 export interface ISidebarItem {

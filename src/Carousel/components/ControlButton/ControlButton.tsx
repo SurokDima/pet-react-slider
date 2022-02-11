@@ -10,15 +10,13 @@ export default function ControlButton({
   className,
   ...props
 }: IControlButtonsProps) {  
-  const rightButtonCls = [classes.controlButtons, classes.next].join(' ');
-  const leftButtonCls = [classes.controlButtons, classes.prev].join(' ');
+  const cls = [classes.controlButton];
+  if(className) cls.push(className);
 
-  const cls =
-    className ?? (type === Directions.Right ? rightButtonCls : leftButtonCls);
   const arrowType: ArrowType = type === Directions.Right ? 'right' : 'left';
 
   return (
-    <div className={cls} {...props}>
+    <div className={cls.join(' ')} {...props}>
       {children ?? <Arrow type={arrowType} className={classes.arrow} />}
     </div>
   );

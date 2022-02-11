@@ -5,19 +5,15 @@ export function CarouselPauseButton({
   pauseButton,
   isPlay,
   isUsedPauseButton,
-  setIsPlay
+  setIsPlay,
 }: ICarousePauseButtonProps) {
-  return (
-    <>
-      {pauseButton
-        ? pauseButton(isPlay, setIsPlay)
-        : isUsedPauseButton && (
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <PauseButton isPlay={isPlay} setIsPlay={setIsPlay} />
-            </div>
-          )}
-    </>
-  );
+  return pauseButton ? (
+    pauseButton(isPlay, setIsPlay)
+  ) : isUsedPauseButton ? (
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <PauseButton isPlay={isPlay} setIsPlay={setIsPlay} />
+    </div>
+  ) : null;
 }
 
 interface ICarousePauseButtonProps {

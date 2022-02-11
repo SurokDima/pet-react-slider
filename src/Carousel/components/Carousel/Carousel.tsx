@@ -1,4 +1,4 @@
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactElement, ReactNode, useMemo, useState } from 'react';
 
 import SlidesProvider, {
   ISlidesProviderProps as ISlidesProps,
@@ -24,8 +24,8 @@ import { CarouselProgressBar } from './CarouselProgressBar/CarouselProgressBar';
 import CarouselDotsProvider, {
   IDot,
 } from './CarouselDotsProvider/CarouselDotsProvider';
-import CarouselControlButton from './CarouselControlButton/CarouselControlButton';
 import { CarouselPauseButton } from './CarouselPauseButton/CarouselPauseButton';
+import CarouselControlButtons from './CarouselControlButtons/CarouselControlButtons';
 
 export default function Carousel(userProps: ICarouselProps) {
   // Merge props
@@ -65,7 +65,7 @@ export default function Carousel(userProps: ICarouselProps) {
   // Use offest controlled by CircularOffset class
   const [circularOffset, setOffset] = useCircularOffset({
     trackLength,
-    ...carouselProps
+    ...carouselProps,
   });
   const isRightEdge =
     infinite !== 'none' ||
@@ -99,7 +99,7 @@ export default function Carousel(userProps: ICarouselProps) {
   // Use groups
   const [groups, setGroups, getCurrentGroup] = useGroups({
     length: children.length,
-    ...carouselProps
+    ...carouselProps,
   });
   // Get current Group
   const currentGroup = getCurrentGroup(circularOffset.offset);
@@ -109,7 +109,7 @@ export default function Carousel(userProps: ICarouselProps) {
     autoplay: autoplay && !isSliding && isRightEdge,
     autoplaySpeed,
     currentOffset: circularOffset.offset,
-    slide: slideRightCallback
+    slide: slideRightCallback,
   });
 
   // Watch for children changes
@@ -117,7 +117,7 @@ export default function Carousel(userProps: ICarouselProps) {
     children,
     setSlides,
     setGroups,
-    ...carouselProps
+    ...carouselProps,
   });
 
   // Use progress with css transition animation
@@ -126,7 +126,7 @@ export default function Carousel(userProps: ICarouselProps) {
     anim: props.useProgress && isPlay && isRightEdge,
     currentOffset: circularOffset.offset,
     isSliding,
-    animationDuration: animationDuration * 1000
+    animationDuration: animationDuration * 1000,
   });
 
   // Props to SlidesProvider
@@ -138,8 +138,15 @@ export default function Carousel(userProps: ICarouselProps) {
 
   return (
     <div className={classes.carousel} ref={ref}>
-      <div className={classes.window}>
-        <SlidesProvider {...slidesProps}>{slides}</SlidesProvider>
+      <div className={classes.windowContainer}>
+        <div className={classes.window}>
+          <SlidesProvider {...slidesProps}>{slides}</SlidesProvider>
+          <CarouselControlButtons
+            controlButtons={props.controlButtons}
+            onClickLeft={slideLeftCallback}
+            onClickRight={slideRightCallback}
+          />
+        </div>
       </div>
 
       <CarouselProgressBar
@@ -148,32 +155,25 @@ export default function Carousel(userProps: ICarouselProps) {
         progressBar={props.progressBar}
       />
 
-      <CarouselDotsProvider
-        animProgress={animProgress}
-        currentGroup={currentGroup}
-        dotsProvider={props.dotsProvider}
-        groups={groups}
-        isUsedDotsProvider={props.useDotsProvider}
-        slideTo={slideTo}
-      />
+      <div style={{ marginTop: '20px' }}>
+        <CarouselDotsProvider
+          animProgress={animProgress}
+          currentGroup={currentGroup}
+          dotsProvider={props.dotsProvider}
+          groups={groups}
+          isUsedDotsProvider={props.useDotsProvider}
+          slideTo={slideTo}
+        />
+      </div>
 
-      <CarouselControlButton
-        type={Directions.Left}
-        callback={slideLeftCallback}
-        controllButton={props.controllButtonLeft}
-      />
-      <CarouselControlButton
-        type={Directions.Right}
-        callback={slideRightCallback}
-        controllButton={props.controllButtonRight}
-      />
-
-      <CarouselPauseButton
-        isPlay={isPlay}
-        setIsPlay={setIsPlay}
-        isUsedPauseButton={props.usePauseButton}
-        pauseButton={props.pauseButton}
-      />
+      <div style={{ marginTop: '20px' }}>
+        <CarouselPauseButton
+          isPlay={isPlay}
+          setIsPlay={setIsPlay}
+          isUsedPauseButton={props.usePauseButton}
+          pauseButton={props.pauseButton}
+        />
+      </div>
     </div>
   );
 }
@@ -199,23 +199,24 @@ export interface ICarouselProps {
   dotsProvider?: DotsProviderRenderProp | null;
   progressBar?: ProgressBarRenderProp | null;
   pauseButton?: PauseButtonRenderProp | null;
-
-  controllButtonLeft?: ControlButtonRenderProp | null;
-  controllButtonRight?: ControlButtonRenderProp | null;
+  controlButtons?: ControlButtonsRenderProp | null;
 }
 
 export type DotsProviderRenderProp = (
   dots: readonly IDot[],
   animProgress?: Readonly<IAnimProgress>
-) => ReactNode;
+) => ReactElement;
 export type ProgressBarRenderProp = (
   animProgress: Readonly<IAnimProgress>
-) => ReactNode;
+) => ReactElement;
 export type PauseButtonRenderProp = (
   isPlay: boolean,
   setIsPlay: (arg: boolean) => void
-) => ReactNode;
-export type ControlButtonRenderProp = (onClickHandler: () => void) => ReactNode;
+) => ReactElement;
+export type ControlButtonsRenderProp = (
+  onClickHandlerPrev: () => void,
+  onClickHandlerNext: () => void
+) => ReactElement;
 
 export interface IAnimationState {
   transition: number;

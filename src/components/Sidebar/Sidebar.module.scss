@@ -14,6 +14,7 @@
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 100;
 
   padding: 10px;
 
@@ -41,4 +42,19 @@
       background: lighten(colors.$black, $amount: 16%);
     }
   }
+
+}
+
+@media (max-width: 1300px) {
+  .sidebar {
+    transform: translateX(-100%);
+
+    transition: transform .5s;
+
+    &.open {
+      transform: translateX(0);
+    }
+  }
+
+  
 }

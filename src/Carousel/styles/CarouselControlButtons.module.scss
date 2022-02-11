@@ -1,0 +1,55 @@
+.controlButtonsContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  padding: 0 10px;
+}
+
+.controlButton {
+  position: absolute;
+  top: 50%;
+
+  cursor: pointer;
+
+  transition: transform 0.4s;
+
+  &.next {
+    right: 0;
+    transform: translate(100%, -50%);
+
+    &:hover {
+      transform: translate(100%, -50%) scale(1.3);
+    }
+  }
+
+  &.prev {
+    left: 0;
+    transform: translate(-100%, -50%);
+
+    &:hover {
+      transform: translate(-100%, -50%) scale(1.3);
+    }
+  }
+}
+
+@media (max-width: 1000px) {
+  .controlButton {
+    position: static;
+
+    &.next {
+      transform: translate(0, 0);
+
+      &:hover {
+        transform: translate(0, 0) scale(1.3);
+      }
+    }
+
+    &.prev {
+      transform: translate(0, 0);
+
+      &:hover {
+        transform: translate(0, 0) scale(1.3);
+      }
+    }
+  }
+}

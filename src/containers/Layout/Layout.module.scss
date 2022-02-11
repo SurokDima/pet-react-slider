@@ -16,3 +16,40 @@
   margin-left: 300px;
   padding-top: 20px;
 }
+
+.hamburger {
+  display: none;
+  
+  position: fixed;
+  top: 10px;
+  left: 250px;
+  z-index: 150;
+
+  transition: transform .5s;
+  &.close {
+    transform: translateX(-240px);
+  }
+
+}
+
+@media (max-width: 1500px) {
+  .container {
+    padding: 0;
+    padding-top: 10px;
+  }
+
+  .content {
+    padding-top: 0;
+  }
+
+}
+
+@media (max-width: 1300px) {
+  .content {
+    margin: 0;
+  }
+
+  .hamburger {
+    display: inline-block;
+  }
+}
