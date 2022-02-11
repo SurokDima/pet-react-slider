@@ -2,7 +2,7 @@ import { ICarouselProps } from './Carousel';
 
 const carouselDefaultProps: Required<ICarouselProps> = {
   children: [],
-  slidesToShow: 3,
+  slidesToShow: 1,
   slidesToScroll: 1, 
   autoplay: true,
   autoplaySpeed: 3,

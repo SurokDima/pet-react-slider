@@ -6,17 +6,3 @@
   font-size: 40px;
   color: #d65a31;
 }
-
-@media (max-width: 500px) {
-  .controlButtons {
-    position: static;
-
-    &.next {
-      transform: translate(0, 0);
-    }
-
-    &.prev {
-      transform: 0;
-    }
-  }
-}
