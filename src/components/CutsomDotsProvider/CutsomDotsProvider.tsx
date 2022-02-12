@@ -1,4 +1,3 @@
-import { CSSProperties } from 'react';
 import { IDot } from '../../Carousel/components/Carousel/CarouselDotsProvider/CarouselDotsProvider';
 import { IAnimProgress } from '../../Carousel/helpers/hooks';
 import CurstomDot from './CustomDot/CustomDot';
