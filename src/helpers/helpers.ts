@@ -1,5 +1,11 @@
+/**
+ * Rerturns new function that executes `func` no more than once per `timeout` milliseconds
+ *
+ * @param func func to wrap
+ * @param timeout timeout between function invocations
+ * @returns wrapper function
+ */
 export function debounce<T extends (...args: any[]) => void>(
-  this: any,
   func: T,
   timeout = 300
 ): (...args: Parameters<T>) => void {
@@ -15,6 +21,11 @@ export function debounce<T extends (...args: any[]) => void>(
   return result;
 }
 
+/**
+ * Returns full height of the document
+ * 
+ * @returns full height of document
+ */
 export function getDocumentFullHeight(): number {
   return Math.max(
     document.body.scrollHeight,
@@ -26,7 +37,6 @@ export function getDocumentFullHeight(): number {
   );
 }
 
-
 interface Coords {
   top: number;
   bottom: number;
@@ -34,6 +44,12 @@ interface Coords {
   right: number;
 }
 
+/**
+ * Returns coordinates of element relative to document
+ * 
+ * @param el html element
+ * @returns coordinates of element relative to document
+ */
 export function getElementPos(el: Element): Coords {
   const rect = el.getBoundingClientRect();
 

@@ -49,6 +49,13 @@ export default function Sidebar({
   );
 }
 
+/**
+ * Returns id of current scroll item
+ * 
+ * @param items array of scroll items
+ * @param scroll current scroll position (by y)
+ * @returns id of current scroll items
+ */
 function getCurrentItem(
   items: readonly ISidebarItem[],
   scroll: IScroll
@@ -83,10 +90,19 @@ function getCurrentItem(
   return minItem.id;
 }
 
+/**
+ * Finds and returns scroll items on mounting
+ * 
+ * @param containerRef reference to container div
+ * @returns scroll items
+ */
 function useSections(containerRef: RefObject<HTMLDivElement>) {
   const { sectionsClassName, titlesClassName } = useContext(SectionsScrolling);
   const [items, setItems] = useState<readonly ISidebarItem[]>([]);
 
+  /**
+   * Uptade sections info
+   */
   const updateSections = useCallback(() => {
     if (containerRef.current) {
       const sections = containerRef.current.querySelectorAll(

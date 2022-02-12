@@ -26,6 +26,13 @@ export function initSlides(
   return [...children];
 }
 
+/**
+ * Rerturns new function that executes `func` no more than once per `timeout` milliseconds
+ *
+ * @param func func to wrap
+ * @param timeout timeout between function invocations
+ * @returns wrapper function
+ */
 export function debounce<T extends (...args: any[]) => void>(
   this: any,
   func: T,

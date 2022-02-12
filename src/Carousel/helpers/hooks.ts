@@ -24,6 +24,11 @@ import {
 } from './helpers';
 import { IAnimationState } from '../components/Carousel/Carousel';
 
+/**
+ * Executes callback when on resize (uses debounce)
+ * 
+ * @param callback callback to execute
+ */
 export function useResize(callback: () => void) {
   useEffect(() => {
     const listener = debounce(callback);

@@ -2,6 +2,9 @@ import { animate } from './animate';
 
 const pow = Math.pow;
 
+/**
+ * Timing function
+ */
 function easeOutQuart(x: number) {
   return 1 - pow(1 - x, 4);
 }
@@ -11,10 +14,15 @@ interface IAnimateScrollArguments {
   duration: number;
 }
 
+/**
+ * 
+ * @param targetPosition target position of scroll
+ * @param dutation duration of animation
+ */
 export function animateScroll({
   targetPosition,
   duration,
-}: IAnimateScrollArguments) {
+}: IAnimateScrollArguments): void {
   const initialPosition = document.documentElement.scrollTop ;
   const amountPixelsToScroll =  targetPosition - initialPosition;
   

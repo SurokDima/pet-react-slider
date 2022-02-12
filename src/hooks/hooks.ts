@@ -6,6 +6,11 @@ export interface IScroll {
   left: number;
 }
 
+/**
+ * Create new scroll state
+ * 
+ * @returns current scroll
+ */
 export function useScroll(): IScroll {
   const [scroll, setScroll] = useState({
     top: 0,
@@ -27,6 +32,11 @@ export function useScroll(): IScroll {
   return scroll;
 }
 
+/**
+ * Executes callback when on resize (uses debounce)
+ * 
+ * @param callback callback to execute
+ */
 export function useResize(callback: () => void) {
   useEffect(() => {
     const listener = debounce(callback);

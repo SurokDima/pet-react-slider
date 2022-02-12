@@ -1,16 +1,33 @@
+import { nanoid } from 'nanoid';
+import { ReactElement, useState } from 'react';
+
 import Header from './components/Header/Header';
 import Section from './components/Section/Section';
 import Layout from './containers/Layout/Layout';
-import classes from './App.module.scss';
-import SectionsScrolling from './contexts/SectionsScrollingContext';
-
 import Carousel from './Carousel/components/Carousel/Carousel';
 import { IAnimProgress } from './Carousel/helpers/hooks';
 import { IDot } from './Carousel/components/Carousel/CarouselDotsProvider/CarouselDotsProvider';
 import CustomDotsProvider from './components/CutsomDotsProvider/CutsomDotsProvider';
 import Button from './components/Button/Button';
-import { nanoid } from 'nanoid';
-import { useState } from 'react';
+
+import SectionsScrolling from './contexts/SectionsScrollingContext';
+
+import classes from './App.module.scss';
+
+/**
+ * Creates and returns array of elements
+ *
+ * @param count number of slides to generate
+ * @returns returns array of elements
+ */
+function generateSlides(count: number): ReactElement[] {
+  const slides = Array(count).fill(null);
+  return slides.map((el, index) => (
+    <div className={classes.carouselItem} key={index}>
+      <div className={classes.carouselItemInner}>{index + 1}</div>
+    </div>
+  ));
+}
 
 function App() {
   const customDotsProvider = (
@@ -90,18 +107,11 @@ function App() {
                     style={{ color: 'rgb(221, 136, 136)' }}
                   >
                     {'{'}true{'}'}
-                  </span>{' '}
-                  <span className="hljs-attr">useDotsProvider</span>=
-                  <span
-                    className="hljs-string"
-                    style={{ color: 'rgb(221, 136, 136)' }}
-                  >
-                    {'{'}true{'}'}
                   </span>
                   &gt;
                 </span>
                 {'\n'}
-                {'  '}//...{'\n'}
+                {'  '}...{'\n'}
                 {'  '}
                 <span className="hljs-tag">
                   &lt;
@@ -163,7 +173,7 @@ function App() {
                   &gt;
                 </span>
                 {'\n'}
-                {'  '}// ...{'\n'}
+                {'  '}...{'\n'}
                 <span className="hljs-tag">
                   &lt;/
                   <span
@@ -178,29 +188,7 @@ function App() {
             </pre>
 
             <div className={classes.carouselContainer}>
-              <Carousel>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>1</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>2</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>3</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>4</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>5</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>6</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>7</div>
-                </div>
-              </Carousel>
+              <Carousel>{generateSlides(7)}</Carousel>
             </div>
           </Section>
           <Section title={'autoplay'} className={classes.section}>
@@ -208,149 +196,577 @@ function App() {
               autoplay specifies whether to automatically play the slides
               autoplaySpeed ​​specifies the time between slides (in seconds)
             </p>
-
+            <pre
+              className="hljs"
+              style={{
+                display: 'block',
+                overflowX: 'auto',
+                padding: '0.5em',
+                color: 'rgb(221, 221, 221)',
+              }}
+            >
+              <span className="xml">
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>{' '}
+                  <span className="hljs-attr">autoplay</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}true{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItem{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'    '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItemInner{'}'}
+                  </span>
+                  &gt;
+                </span>
+                1
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>
+                  &gt;
+                </span>
+              </span>
+            </pre>
             <div className={classes.carouselContainer}>
-              <Carousel autoplay={true}>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>1</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>2</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>3</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>4</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>5</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>6</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>7</div>
-                </div>
-              </Carousel>
+              <Carousel autoplay={true}>{generateSlides(7)}</Carousel>
             </div>
           </Section>
           <Section title={'useProgress'} className={classes.section}>
             <p>useProgress specifies whehter to display progress bar</p>
-
+            <pre
+              className="hljs"
+              style={{
+                display: 'block',
+                overflowX: 'auto',
+                padding: '0.5em',
+                color: 'rgb(221, 221, 221)',
+              }}
+            >
+              <span className="xml">
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>{' '}
+                  <span className="hljs-attr">useProgress</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}true{'}'}
+                  </span>{' '}
+                  <span className="hljs-attr">autoplay</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}true{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItem{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'    '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItemInner{'}'}
+                  </span>
+                  &gt;
+                </span>
+                1
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>
+                  &gt;
+                </span>
+              </span>
+            </pre>
             <div className={classes.carouselContainer}>
               <Carousel useProgress={true} autoplay={true}>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>1</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>2</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>3</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>4</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>5</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>6</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>7</div>
-                </div>
+                {generateSlides(7)}
               </Carousel>
             </div>
           </Section>
           <Section title={'useDotsProvider'} className={classes.section}>
             <p>useProgress specifies whehter to display progress bar</p>
+            <pre
+              className="hljs"
+              style={{
+                display: 'block',
+                overflowX: 'auto',
+                padding: '0.5em',
+                color: 'rgb(221, 221, 221)',
+              }}
+            >
+              <span className="xml">
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>{' '}
+                  <span className="hljs-attr">useDotsProvider</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}true{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItem{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'    '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItemInner{'}'}
+                  </span>
+                  &gt;
+                </span>
+                1
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>
+                  &gt;
+                </span>
+              </span>
+            </pre>
             <div className={classes.carouselContainer}>
-              <Carousel useDotsProvider={true}>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>1</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>2</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>3</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>4</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>5</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>6</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>7</div>
-                </div>
-              </Carousel>
+              <Carousel useDotsProvider={true}>{generateSlides(7)}</Carousel>
             </div>
           </Section>
           <Section title={'usePauseButton'} className={classes.section}>
             <p>useProgress specifies whehter to display pause button</p>
-
+            <pre
+              className="hljs"
+              style={{
+                display: 'block',
+                overflowX: 'auto',
+                padding: '0.5em',
+                color: 'rgb(221, 221, 221)',
+              }}
+            >
+              <span className="xml">
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>{' '}
+                  <span className="hljs-attr">usePauseButton</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}true{'}'}
+                  </span>{' '}
+                  <span className="hljs-attr">autoplay</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}true{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItem{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'    '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItemInner{'}'}
+                  </span>
+                  &gt;
+                </span>
+                1
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>
+                  &gt;
+                </span>
+              </span>
+            </pre>
             <div className={classes.carouselContainer}>
               <Carousel
                 useProgress={true}
                 usePauseButton={true}
                 autoplay={true}
               >
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>1</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>2</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>3</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>4</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>5</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>6</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>7</div>
-                </div>
+                {generateSlides(7)}
               </Carousel>
             </div>
           </Section>
           <Section title={'startOffset'} className={classes.section}>
             <p>useProgress specifies default offset from left</p>
-
+            <pre
+              className="hljs"
+              style={{
+                display: 'block',
+                overflowX: 'auto',
+                padding: '0.5em',
+                color: 'rgb(221, 221, 221)',
+              }}
+            >
+              <span className="xml">
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>{' '}
+                  <span className="hljs-attr">startOffset</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}0.5{'}'}
+                  </span>{' '}
+                  <span className="hljs-attr">useDotsProvider</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}true{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItem{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'    '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItemInner{'}'}
+                  </span>
+                  &gt;
+                </span>
+                1
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>
+                  &gt;
+                </span>
+              </span>
+            </pre>
             <div className={classes.carouselContainer}>
               <Carousel useDotsProvider={true} startOffset={0.75}>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>1</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>2</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>3</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>4</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>5</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>6</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>7</div>
-                </div>
+                {generateSlides(7)}
               </Carousel>
             </div>
           </Section>
@@ -358,168 +774,1023 @@ function App() {
             <p>
               slidesToShow shows how many slides to display at the same time
             </p>
+            <pre
+              className="hljs"
+              style={{
+                display: 'block',
+                overflowX: 'auto',
+                padding: '0.5em',
+                color: 'rgb(221, 221, 221)',
+              }}
+            >
+              <span className="xml">
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>{' '}
+                  <span className="hljs-attr">slidesToShow</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}2{'}'}
+                  </span>{' '}
+                  <span className="hljs-attr">useDotsProvider</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}true{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItem{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'    '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItemInner{'}'}
+                  </span>
+                  &gt;
+                </span>
+                1
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>
+                  &gt;
+                </span>
+              </span>
+            </pre>
             <div className={classes.carouselContainer}>
               <Carousel useDotsProvider={true} slidesToShow={2}>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>1</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>2</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>3</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>4</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>5</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>6</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>7</div>
-                </div>
+                {generateSlides(7)}
               </Carousel>
             </div>
             <p>slidesToShow can even be a fractional number</p>
+            <pre
+              className="hljs"
+              style={{
+                display: 'block',
+                overflowX: 'auto',
+                padding: '0.5em',
+                color: 'rgb(221, 221, 221)',
+              }}
+            >
+              <span className="xml">
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>{' '}
+                  <span className="hljs-attr">slidesToShow</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}2.5{'}'}
+                  </span>{' '}
+                  <span className="hljs-attr">useDotsProvider</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}true{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItem{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'    '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItemInner{'}'}
+                  </span>
+                  &gt;
+                </span>
+                1
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>
+                  &gt;
+                </span>
+              </span>
+            </pre>
             <div className={classes.carouselContainer}>
-              <Carousel
-                useDotsProvider={true}
-                slidesToShow={2.5}
-                startOffset={-0.5}
-              >
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>1</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>2</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>3</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>4</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>5</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>6</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>7</div>
-                </div>
+              <Carousel useDotsProvider={true} slidesToShow={2.5}>
+                {generateSlides(7)}
               </Carousel>
             </div>
           </Section>
           <Section title={'slidesToScroll'} className={classes.section}>
             <p>slidesToScroll shows how many slides to scroll</p>
+            <pre
+              className="hljs"
+              style={{
+                display: 'block',
+                overflowX: 'auto',
+                padding: '0.5em',
+                color: 'rgb(221, 221, 221)',
+              }}
+            >
+              <span className="xml">
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>{' '}
+                  <span className="hljs-attr">slidesToShow</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}3{'}'}
+                  </span>{' '}
+                  <span className="hljs-attr">slidesToScroll</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}2{'}'}
+                  </span>{' '}
+                  <span className="hljs-attr">useDotsProvider</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}true{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItem{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'    '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItemInner{'}'}
+                  </span>
+                  &gt;
+                </span>
+                1
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>
+                  &gt;
+                </span>
+              </span>
+            </pre>
             <div className={classes.carouselContainer}>
               <Carousel
                 useDotsProvider={true}
                 slidesToShow={3}
                 slidesToScroll={2}
               >
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>1</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>2</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>3</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>4</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>5</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>6</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>7</div>
-                </div>
+                {generateSlides(7)}
               </Carousel>
             </div>
             <p>slidesToScroll can even be a fractional number</p>
+            <pre
+              className="hljs"
+              style={{
+                display: 'block',
+                overflowX: 'auto',
+                padding: '0.5em',
+                color: 'rgb(221, 221, 221)',
+              }}
+            >
+              <span className="xml">
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>{' '}
+                  <span className="hljs-attr">slidesToScroll</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}0.5{'}'}
+                  </span>{' '}
+                  <span className="hljs-attr">useDotsProvider</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}true{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItem{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'    '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItemInner{'}'}
+                  </span>
+                  &gt;
+                </span>
+                1
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>
+                  &gt;
+                </span>
+              </span>
+            </pre>
             <div className={classes.carouselContainer}>
               <Carousel useDotsProvider={true} slidesToScroll={0.5}>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>1</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>2</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>3</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>4</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>5</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>6</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>7</div>
-                </div>
+                {generateSlides(7)}
               </Carousel>
             </div>
           </Section>
           <Section title={'infinite'} className={classes.section}>
             <p>infinite specifies scrolling mode</p>
+            <pre
+              className="hljs"
+              style={{
+                display: 'block',
+                overflowX: 'auto',
+                padding: '0.5em',
+                color: 'rgb(221, 221, 221)',
+              }}
+            >
+              <span className="xml">
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>{' '}
+                  <span className="hljs-attr">infinite</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}'infinite'{'}'}
+                  </span>{' '}
+                  <span className="hljs-attr">useDotsProvider</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}true{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItem{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'    '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItemInner{'}'}
+                  </span>
+                  &gt;
+                </span>
+                1
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>
+                  &gt;
+                </span>
+              </span>
+            </pre>
             <div className={classes.carouselContainer}>
               <Carousel useDotsProvider={true} infinite={'infinite'}>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>1</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>2</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>3</div>
-                </div>
+                {generateSlides(3)}
               </Carousel>
             </div>
+            <pre
+              className="hljs"
+              style={{
+                display: 'block',
+                overflowX: 'auto',
+                padding: '0.5em',
+                color: 'rgb(221, 221, 221)',
+              }}
+            >
+              <span className="xml">
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>{' '}
+                  <span className="hljs-attr">infinite</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}'loop'{'}'}
+                  </span>{' '}
+                  <span className="hljs-attr">useDotsProvider</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}true{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItem{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'    '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItemInner{'}'}
+                  </span>
+                  &gt;
+                </span>
+                1
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>
+                  &gt;
+                </span>
+              </span>
+            </pre>
             <div className={classes.carouselContainer}>
               <Carousel useDotsProvider={true} infinite={'loop'}>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>1</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>2</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>3</div>
-                </div>
+                {generateSlides(3)}
               </Carousel>
             </div>
+            <pre
+              className="hljs"
+              style={{
+                display: 'block',
+                overflowX: 'auto',
+                padding: '0.5em',
+                color: 'rgb(221, 221, 221)',
+              }}
+            >
+              <span className="xml">
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>{' '}
+                  <span className="hljs-attr">infinite</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}'none'{'}'}
+                  </span>{' '}
+                  <span className="hljs-attr">startOffset</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}0.5{'}'}
+                  </span>{' '}
+                  <span className="hljs-attr">useDotsProvider</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}true{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItem{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'    '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItemInner{'}'}
+                  </span>
+                  &gt;
+                </span>
+                1
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>
+                  &gt;
+                </span>
+              </span>
+            </pre>
             <div className={classes.carouselContainer}>
               <Carousel
                 useDotsProvider={true}
                 infinite={'none'}
                 startOffset={0.5}
               >
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>1</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>2</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>3</div>
-                </div>
+                {generateSlides(3)}
               </Carousel>
             </div>
           </Section>
           <Section title={'render props'} className={classes.section}>
-            <p>Also for all controls there are corresponding render props. So you can do something like this</p>
+            <p>
+              Also for all controls there are corresponding render props. So you
+              can do something like this
+            </p>
+            <pre
+              className="hljs"
+              style={{
+                display: 'block',
+                overflowX: 'auto',
+                padding: '0.5em',
+                color: 'rgb(221, 221, 221)',
+              }}
+            >
+              <span className="xml">
+                const customDotsProvider = ({'\n'}
+                {'  '}dots: readonly IDot[],{'\n'}
+                {'  '}animProgress: Readonly
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    IAnimProgress
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}) =&gt;{' '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    CustomDotsProvider
+                  </span>{' '}
+                  <span className="hljs-attr">animProgress</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}animProgress{'}'}
+                  </span>{' '}
+                  <span className="hljs-attr">dots</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}dots{'}'}
+                  </span>{' '}
+                  /&gt;
+                </span>
+                ;{'\n'}
+                {'\n'}...{'\n'}
+                {'\n'}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>
+                  {'\n'}
+                  {'  '}
+                  <span className="hljs-attr">useDotsProvider</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}true{'}'}
+                  </span>
+                  {'\n'}
+                  {'  '}
+                  <span className="hljs-attr">infinite</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}
+                  </span>
+                  '<span className="hljs-attr">infinite</span>'{'}'}
+                  {'\n'}
+                  {'  '}
+                  <span className="hljs-attr">dotsProvider</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}customDotsProvider{'}'}
+                  </span>
+                  {'\n'}
+                  {'  '}
+                  <span className="hljs-attr">autoplay</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}true{'}'}
+                  </span>
+                  {'\n'}&gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItem{'}'}
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'    '}
+                <span className="hljs-tag">
+                  &lt;
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>{' '}
+                  <span className="hljs-attr">className</span>=
+                  <span
+                    className="hljs-string"
+                    style={{ color: 'rgb(221, 136, 136)' }}
+                  >
+                    {'{'}classes.carouselItemInner{'}'}
+                  </span>
+                  &gt;
+                </span>
+                2
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    div
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'  '}...{'\n'}
+                <span className="hljs-tag">
+                  &lt;/
+                  <span
+                    className="hljs-name"
+                    style={{ color: 'rgb(221, 136, 136)', fontWeight: 700 }}
+                  >
+                    Carousel
+                  </span>
+                  &gt;
+                </span>
+                {'\n'}
+                {'\n'}...
+              </span>
+            </pre>
             <div className={classes.carouselContainer}>
               <Carousel
                 useDotsProvider={true}
@@ -527,15 +1798,7 @@ function App() {
                 dotsProvider={customDotsProvider}
                 autoplay={true}
               >
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>1</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>2</div>
-                </div>
-                <div className={classes.carouselItem}>
-                  <div className={classes.carouselItemInner}>3</div>
-                </div>
+                {generateSlides(3)}
               </Carousel>
             </div>
           </Section>

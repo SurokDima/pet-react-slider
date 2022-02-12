@@ -4,7 +4,14 @@ interface IAnimateArguments {
   draw: (progress: number) => void;
 }
 
-export function animate({ duration, timing, draw }: IAnimateArguments) {
+/**
+ * Function to create custom animation
+ *
+ * @param duration duration of animation
+ * @param timing timing function
+ * @param draw function to draw result, takes progress
+ */
+export function animate({ duration, timing, draw }: IAnimateArguments): void {
   const start = performance.now();
 
   requestAnimationFrame(function step(timestamp: number) {
