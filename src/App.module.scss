@@ -1,0 +1,40 @@
+@use './asserts/styles/colors' as colors;
+
+.section {
+  margin-top: 20px;
+}
+
+.carouselItem {
+  width: 100%;
+  height: 200px;
+
+  color: colors.$white;
+  padding: 10px;
+
+  &Inner {
+    width: 100%;
+    height: 100%;
+    background: lighten(colors.$black, 8%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+  }
+}
+
+.carouselContainer {
+  display: flex;
+  justify-content: center;
+
+  margin-top: 20px;
+}
+
+.buttonsContainer {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+
+  .leftButton {
+    margin-right: 20px;
+  }
+}

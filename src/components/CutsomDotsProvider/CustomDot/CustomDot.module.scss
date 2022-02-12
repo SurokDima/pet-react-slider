@@ -1,0 +1,23 @@
+@use '../../../asserts/styles/colors' as colors;
+
+.dotContainer {
+  width: 23%;
+  height: 10px;
+  background: colors.$grey;
+  opacity: 0.5;
+
+  &.active {
+    opacity: 1;
+  }
+
+  .dotProgress {
+    height: 100%;
+    background: colors.$orange;
+  }
+
+  .dotTitle {
+    color: colors.$white;
+    font-size: 1.2rem;
+    padding: 10px;
+  }
+}

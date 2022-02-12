@@ -1,0 +1,26 @@
+@use '../../asserts/styles/colors' as colors;
+
+.hamburger {
+  display: inline-block;
+  position: relative;
+  font-size: 2.5rem;
+  color: colors.$orange;
+  
+  cursor: pointer;
+  i {
+    position: absolute;
+    z-index: 100;    
+    opacity: 0;
+
+    transition: opacity .3s;
+
+    &.active {
+      opacity: 1;
+    }
+
+    &.stub {
+      position: relative;
+    }
+  }
+
+}

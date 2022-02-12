@@ -1,0 +1,25 @@
+@use '../../asserts/styles/colors' as colors;
+@use '../../asserts/styles/families' as families;
+
+.tech {
+  display: inline-block;
+
+  background-color: colors.$orange;
+  color: colors.$white;
+  font-size: .8125rem;
+  font-family: families.$roboto;
+  font-weight: 700;
+
+  padding: .5em 1em;
+  
+  border-radius: 10px;
+
+  transition: background .4s;
+
+  cursor: default;
+  user-select: none;
+
+  &:hover {
+    background: lighten(colors.$orange, 10%);
+  }
+}

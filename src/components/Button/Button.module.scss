@@ -1,0 +1,22 @@
+@use '../../asserts/styles/colors' as colors;
+
+.button {
+  color: colors.$white;
+  background: colors.$orange;
+  border: 3px solid colors.$orange;
+  border-radius: 10px;
+  display: inline-block;
+
+  font-size: 1.1rem;
+  font-weight: 700;
+  padding: .5em 1em;
+
+  cursor: pointer;
+
+  transition: color, background .4s;
+
+  &:hover {
+    color: colors.$orange;
+    background: colors.$white;
+  }
+}

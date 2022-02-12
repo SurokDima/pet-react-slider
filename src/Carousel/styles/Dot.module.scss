@@ -1,0 +1,28 @@
+.dot {
+  background: #393e46;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+
+  transition: background .3s;
+
+  margin-right: 20px;
+
+  cursor: pointer;
+
+  &:last-child {
+    margin: 0;
+  }
+
+  &.active {
+    background: #d65a31;
+
+    &:hover {
+      background: lighten(#d65a31, 5%);
+    }
+  }
+
+  &:hover {
+    background: lighten(#393e46, 20%);
+  }
+}

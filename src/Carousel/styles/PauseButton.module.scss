@@ -1,0 +1,37 @@
+.pauseButton {
+  font-size: 30px;
+  color: #d65a31;
+  position: relative;
+  display: inline-block;
+
+  i {
+    opacity: 0;
+    transition: opacity 0.5s;
+
+    cursor: pointer;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    transition: color 0.4s;
+
+    &.active {
+      opacity: 1;
+    }
+
+    &.stub {
+      transform: translate(0, 0);
+      top: 0;
+      left: 0;
+      color: transparent;
+      position: relative;
+    }
+  }
+
+  &:hover{
+    color: lighten(#d65a31, 8%);
+  }
+
+}
