@@ -26,6 +26,23 @@ export function initSlides(
   return [...children];
 }
 
+export function debounce<T extends (...args: any[]) => void>(
+  this: any,
+  func: T,
+  timeout = 300
+): (...args: Parameters<T>) => void {
+  let timer: NodeJS.Timeout;
+
+  const result = function (
+    this: ThisParameterType<T>,
+    ...args: Parameters<T>
+  ): void {
+    clearTimeout(timer);
+    timer = setTimeout(() => func.apply(this, args), timeout);
+  };
+  return result;
+}
+
 /**
  * Sets unique id to each slide
  *
@@ -97,7 +114,7 @@ export function childrenIsChanged(
 
 /**
  * Returns offset limited by left and right edges
- * 
+ *
  * @param offset offset to limit
  * @param trackLength length of track
  * @param slidesToShow number of slides to show at the same time

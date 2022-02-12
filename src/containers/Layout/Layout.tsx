@@ -18,6 +18,7 @@ export default function Layout({ children }: ILayoutProps) {
       <Sidebar
         isOpen={isSidebarOpen}
         contentRef={contentRef}
+        toggleSidebar={toggleSidebar}
       />
       <Hamburger
         onClick={toggleSidebar}

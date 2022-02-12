@@ -17,11 +17,22 @@ import {
 } from '../types/types';
 import {
   childrenIsChanged,
+  debounce,
   initGroups,
   initSlideObjects,
   inverseDirection,
 } from './helpers';
 import { IAnimationState } from '../components/Carousel/Carousel';
+
+export function useResize(callback: () => void) {
+  useEffect(() => {
+    const listener = debounce(callback);
+    listener();
+
+    window.addEventListener('resize', listener);
+    return () => window.removeEventListener('resize', listener);
+  }, [callback]);
+}
 
 /**
  * Hook to keep track of the width of element
@@ -36,13 +47,9 @@ export function useWidth<T extends HTMLElement>(
   const ref = useRef<T>(null);
   const [width, setWidth] = useState<number>(defaultWidth);
 
-  useEffect(() => {
-    const listener = () => ref.current && setWidth(ref.current.clientWidth);
-    listener();
+  const resizeCallback = useCallback(() => ref.current && setWidth(ref.current.clientWidth), []);
 
-    window.addEventListener('resize', listener);
-    return () => window.removeEventListener('resize', listener);
-  }, [ref]);
+  useResize(resizeCallback);
 
   return [width, ref];
 }

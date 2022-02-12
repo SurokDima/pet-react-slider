@@ -4,7 +4,7 @@ import SlidesProvider, {
   ISlidesProviderProps as ISlidesProps,
 } from '../Slides/SlidesProvider';
 import { initSlideObjects } from '../../helpers/helpers';
-import { Directions, Infinite, ISlideObj, Slide } from '../../types/types';
+import { Infinite, ISlideObj, Slide } from '../../types/types';
 import defaultProps from './carouselDefaultProps';
 import {
   IAnimProgress,

@@ -1,45 +1,33 @@
 import { nanoid } from 'nanoid';
-import { RefObject, useContext, useEffect, useState } from 'react';
+import { RefObject, useCallback, useContext, useEffect, useState } from 'react';
 import SectionsScrolling from '../../contexts/SectionsScrollingContext';
+import { animateScroll } from '../../helpers/animateScroll';
+import { getDocumentFullHeight, getElementPos } from '../../helpers/helpers';
+import { useScroll, useResize, IScroll } from '../../hooks/hooks';
 import classes from './Sidebar.module.scss';
 
 export default function Sidebar({
   className,
   isOpen,
   contentRef,
+  toggleSidebar
 }: ISidebarProps) {
-  const { sectionsClassName, titlesClassName } = useContext(SectionsScrolling);
-  const [items, setItems] = useState<readonly ISidebarItem[]>([]);
+  const items = useSections(contentRef);
   const scroll = useScroll();
-  
+
   const cls = [classes.sidebar];
   if (className) cls.push(className);
   if (isOpen) cls.push(classes.open);
 
-  useEffect(() => {
-    if (contentRef.current) {
-      const sections = contentRef.current.querySelectorAll(
-        '.' + sectionsClassName
-      );
-
-        console.log(contentRef.current.hidden);
-        
-
-      const items = Array.from(sections).map<ISidebarItem>(el => {
-        const title =
-          el.querySelector('.' + titlesClassName)?.textContent ?? '';
-
-        const { top, bottom } = getElementPos(el);
-        
-
-        return { title, top, bottom, id: nanoid() };
-      });
-
-      setItems(items);
-    }
-  }, [contentRef, sectionsClassName, titlesClassName]);
-  
   const currentItem = getCurrentItem(items, scroll);
+
+  const itemClickHandler = (scroll: number): void => {
+    toggleSidebar();
+    animateScroll({targetPosition: scroll, duration: 500})
+  }
+
+  console.log(items);
+  
 
   return (
     <div className={cls.join(' ')}>
@@ -51,11 +39,7 @@ export default function Sidebar({
           <div
             key={index}
             className={cls.join(' ')}
-            onClick={() =>
-              window.scrollTo({
-                top: item.top,
-              })
-            }
+            onClick={() => itemClickHandler(item.top)}
           >
             {item.title}
           </div>
@@ -68,19 +52,23 @@ export default function Sidebar({
 function getCurrentItem(
   items: readonly ISidebarItem[],
   scroll: IScroll
-): ISidebarItem['id'] | null {  
+): ISidebarItem['id'] | null {
   if (items.length === 0) return null;
-  
+
   const filteredItems = items
     .map(el => ({
       id: el.id,
       bottom: el.bottom - scroll.top,
     }))
-    
+    .filter(el => el.bottom >= 0);
   if (filteredItems.length === 0) return null;
-  if(scroll.top >= getDocumentFullHeight() - document.documentElement.clientHeight) {
+
+  if (
+    scroll.top >=
+    getDocumentFullHeight() - document.documentElement.clientHeight
+  ) {
     const maxItem = items.reduce(
-      (max, curr) => (curr.bottom < max.bottom ? curr : max),
+      (max, curr) => (curr.bottom > max.bottom ? curr : max),
       filteredItems[0]
     );
 
@@ -93,82 +81,44 @@ function getCurrentItem(
   );
 
   return minItem.id;
-
-  
 }
 
-function debounce<T extends (...args: any[]) => void>(
-  this: any,
-  func: T,
-  timeout = 300
-): (...args: Parameters<T>) => void {
-  let timer: NodeJS.Timeout;
+function useSections(containerRef: RefObject<HTMLDivElement>) {
+  const { sectionsClassName, titlesClassName } = useContext(SectionsScrolling);
+  const [items, setItems] = useState<readonly ISidebarItem[]>([]);
 
-  const result = (...args: Parameters<T>): void => {
-    clearTimeout(timer);
-    timer = setTimeout(() => func.apply(this, args), timeout);
-  };
-  return result;
-}
+  const updateSections = useCallback(() => {
+    if (containerRef.current) {
+      const sections = containerRef.current.querySelectorAll(
+        '.' + sectionsClassName
+      );
 
-interface Coords {
-  top: number;
-  bottom: number;
-  left: number;
-  right: number;
-}
+      const items = Array.from(sections).map<ISidebarItem>(el => {
+        const title =
+          el.querySelector('.' + titlesClassName)?.textContent ?? '';
 
-function getElementPos(el: Element): Coords {
-  const rect = el.getBoundingClientRect();
+        const { top, bottom } = getElementPos(el);
 
-  return {
-    top: rect.top + document.body.scrollTop,
-    bottom: rect.bottom + document.body.scrollTop,
-    left: rect.left + document.body.scrollLeft,
-    right: rect.right + document.body.scrollLeft,
-  };
-}
+        return { title, top, bottom, id: nanoid() };
+      });
 
-function getDocumentFullHeight(): number {
-  return Math.max(
-    document.body.scrollHeight,
-    document.documentElement.scrollHeight,
-    document.body.offsetHeight,
-    document.documentElement.offsetHeight,
-    document.body.clientHeight,
-    document.documentElement.clientHeight
-  );
-}
-
-interface IScroll {
-  top: number;
-  left: number;
-}
-
-function useScroll(): IScroll {
-  const [scroll, setScroll] = useState({
-    top: 0,
-    left: 0,
-  });
+      setItems(items);
+    }
+  }, [containerRef, sectionsClassName, titlesClassName]);
 
   useEffect(() => {
-    const updatePosition = debounce(() => {
-      setScroll({
-        top: window.scrollY,
-        left: window.scrollX,
-      });
-    });
-    window.addEventListener('scroll', updatePosition);
-    updatePosition();
-    return () => window.removeEventListener('scroll', updatePosition);
-  }, []);
+    updateSections();
+  }, [containerRef, sectionsClassName, titlesClassName, updateSections]);
 
-  return scroll;
+  useResize(updateSections);
+
+  return items;
 }
 
 interface ISidebarProps {
   isOpen: boolean;
   contentRef: RefObject<HTMLDivElement>;
+  toggleSidebar: () => void;
 
   className?: string;
 }

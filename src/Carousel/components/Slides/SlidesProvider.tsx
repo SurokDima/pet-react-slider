@@ -2,6 +2,7 @@ import { CSSProperties } from 'react';
 
 import classes from '../../styles/Slides.module.scss';
 import { ISlideObj } from '../../types/types';
+import Slide from './Slide/Slide';
 
 export default function SlidesProvider({
   transform,
@@ -17,9 +18,9 @@ export default function SlidesProvider({
   return (
     <div className={classes.slides} style={styles}>
       {children.map(slideObj => (
-        <div style={{ minWidth: slideWidth }} key={slideObj.id}>
+        <Slide key={slideObj.id} width={slideWidth}>
           {slideObj.slide}
-        </div>
+        </Slide>
       ))}
     </div>
   );
