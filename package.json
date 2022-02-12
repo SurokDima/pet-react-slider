@@ -2,7 +2,7 @@
   "name": "pet-slider",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://github.com/SurokDima/peat-react-slider/docs",
+  "homepage": "https://github.com/SurokDima/peat-react-slider/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
