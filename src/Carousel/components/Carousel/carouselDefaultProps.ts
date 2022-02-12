@@ -4,7 +4,7 @@ const carouselDefaultProps: Required<ICarouselProps> = {
   children: [],
   slidesToShow: 1,
   slidesToScroll: 1, 
-  autoplay: true,
+  autoplay: false,
   autoplaySpeed: 3,
   startOffset: 0,
   animationDuration: 0.5,
@@ -12,7 +12,7 @@ const carouselDefaultProps: Required<ICarouselProps> = {
 
   useProgress: false,
   useDotsProvider: false,
-  usePauseButton: true,
+  usePauseButton: false,
 
   dotsProvider: null,
   progressBar: null,

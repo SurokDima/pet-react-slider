@@ -399,7 +399,7 @@ export function useAnimProgress({
     transition: 0,
     state: 'decreasing',
     progress: 0,
-  });
+  });  
 
   useEffect(() => {
     setAnimProgress({
@@ -407,7 +407,7 @@ export function useAnimProgress({
       state: 'decreasing',
       progress: 0,
     });
-
+    
     if (anim && !isSliding) {
       setAnimProgress({
         transition: time,

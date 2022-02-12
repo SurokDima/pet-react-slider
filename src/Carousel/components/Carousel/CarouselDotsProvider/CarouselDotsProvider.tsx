@@ -18,8 +18,8 @@ export default function CarouselDotsProvider({
       isCurrent: currentGroup === el.id,
       onClickHandler: () => slideTo(el.offset),
     };
-  });
-
+  });  
+  
   return dotsProvider ? (
     dotsProvider(dots, animProgress)
   ) : isUsedDotsProvider ? (

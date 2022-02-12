@@ -119,11 +119,11 @@ export default function Carousel(userProps: ICarouselProps) {
     setGroups,
     ...carouselProps,
   });
-
+  
   // Use progress with css transition animation
   const animProgress = useAnimProgress({
     time: autoplaySpeed * 1000,
-    anim: props.useProgress && isPlay && isRightEdge,
+    anim: (props.useProgress || !!props.dotsProvider || !!props.progressBar) && isPlay && isRightEdge,
     currentOffset: circularOffset.offset,
     isSliding,
     animationDuration: animationDuration * 1000,
@@ -204,7 +204,7 @@ export interface ICarouselProps {
 
 export type DotsProviderRenderProp = (
   dots: readonly IDot[],
-  animProgress?: Readonly<IAnimProgress>
+  animProgress: Readonly<IAnimProgress>
 ) => ReactElement;
 export type ProgressBarRenderProp = (
   animProgress: Readonly<IAnimProgress>
