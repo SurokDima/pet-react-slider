@@ -1,6 +1,6 @@
 import { ReactNode, useRef, useState } from 'react';
 import Hamburger from '../../components/Hamburger/Hamburger';
-import Sidebar, { ISidebarItem } from '../../components/Sidebar/Sidebar';
+import Sidebar from '../../components/Sidebar/Sidebar';
 
 import classes from './Layout.module.scss';
 
