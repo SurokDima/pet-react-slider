@@ -26,9 +26,6 @@ export default function Sidebar({
     animateScroll({targetPosition: scroll, duration: 500})
   }
 
-  console.log(items);
-  
-
   return (
     <div className={cls.join(' ')}>
       {items.map((item, index) => {
