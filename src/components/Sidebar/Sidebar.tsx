@@ -68,13 +68,14 @@ function getCurrentItem(
       bottom: el.bottom - scroll.top,
     }))
     .filter(el => el.bottom >= 0);
+    
   if (filteredItems.length === 0) return null;
 
   if (
     scroll.top >=
     getDocumentFullHeight() - document.documentElement.clientHeight
   ) {
-    const maxItem = items.reduce(
+    const maxItem = filteredItems.reduce(
       (max, curr) => (curr.bottom > max.bottom ? curr : max),
       filteredItems[0]
     );
@@ -82,11 +83,11 @@ function getCurrentItem(
     return maxItem.id;
   }
 
-  const minItem = items.reduce(
+  const minItem = filteredItems.reduce(
     (min, curr) => (curr.bottom < min.bottom ? curr : min),
     filteredItems[0]
   );
-
+    
   return minItem.id;
 }
 
