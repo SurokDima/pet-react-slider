@@ -5,3 +5,7 @@ The goal of the project was to master the basic skills of working with React.js 
 ## Gihub pages
 
 You can see demo page on the link: [https://surokdima.github.io/pet-react-slider/](https://surokdima.github.io/pet-react-slider/)
+
+## What did I use
+
+HTML, CSS + SCSS, JavaScript + TypeScript, React.js
